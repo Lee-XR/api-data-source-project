@@ -1,0 +1,94 @@
+#root {
+  position: relative;
+  max-width: 1280px;
+  margin: 0 auto;
+  text-align: center;
+
+  /* background: rgba(100, 100, 100, 0.3); */
+}
+
+header {
+  --item-gap: 52px;
+
+  position: sticky;
+  top: 0;
+  margin: 0 auto;
+  background: rgb(240, 240, 240);
+}
+
+header ul {
+  --item-num : 0;
+
+  position: relative;
+  margin: auto;
+  padding: 4px 0 8px;
+  width: fit-content;
+  height: 100%;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: center;
+  column-gap: var(--item-gap);
+}
+
+header ul::before {
+  --item-width: calc((100% - (var(--item-gap) * 2)) / 3);
+
+  content: '';
+  position: absolute;
+  left: calc((var(--item-width) + var(--item-gap)) * var(--item-num));
+  bottom: 0;
+  margin: auto;
+  width: var(--item-width);
+  height: 2px;
+  background: #213547;
+  transition: left 200ms ease-in-out;
+}
+
+header ul li {
+  padding: 8px;
+  border-radius: 4px;
+}
+
+
+header ul li:hover {
+  background: rgba(200, 200, 200, 0.5);
+  transition: background 200ms ease-in-out;
+}
+
+main {
+  padding: 0 2rem;
+}
+
+.btns {
+  margin: 8px 0;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.data-count {
+  margin: auto;
+  margin-top: 40px;
+  width: max(60vw, 500px);
+  text-align: center;
+  font-weight: 600;
+}
+
+.fields {
+  margin: 8px auto;
+  padding: 0;
+  width: max(60vw, 500px);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field {
+  margin: 0;
+  padding: 8px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 16px;
+  border: 1px solid rgba(100, 100, 100, 0.3);
+}
