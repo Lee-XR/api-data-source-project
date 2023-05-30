@@ -1,0 +1,5 @@
+{
+    "require": {
+        "skiddle/skiddle-php-sdk": "^1.1"
+    }
+}
