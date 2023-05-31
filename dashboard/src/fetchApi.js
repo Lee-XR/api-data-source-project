@@ -1,35 +1,32 @@
 import axios from 'axios';
 
 // Instance connect to Skiddle API
-async function fetchSkiddle(endpoint, params) {
-	const baseUrl = 'https://www.skiddle.com/api/v1/';
-	const api_key = '795164c8536dbac9f1147fce29672a54';
-	const parameters = new URLSearchParams(params);
-	parameters.append('api_key', api_key);
-
+async function fetchSkiddle(type, id, params) {
 	return await axios
-		.get(`${baseUrl}${endpoint}`, {
-			params: parameters,
+		.post(import.meta.env.VITE_SKIDDLE_SDK_DEV_URL, {
+			type,
+			id,
+			params,
 		})
-		.then((response) => response.data);
-
-	// const instance = axios.create({
-	// 	baseURL: baseUrl,
-	// 	method: 'GET',
-	// 	params: parameters,
-	// });
-	// return await instance.get(endpoint).then((response) => response.data);
-
-    // const response = await fetch(`${baseUrl}${endpoint}/?${parameters.toString()}`, {
-    //     method: 'GET'
-    // });
-    // return await response.json();
+		.then((response) => {
+			return {
+				totalHits: response.data.totalcount,
+				records: response.data.results,
+			};
+		})
+		.catch((error) => {
+			return error.response;
+		});
 }
 
 // Instance connect to DataThistle API
-function dataThistleInstance() {}
+function fetchDataThistle() {
+	
+}
 
 // Instance connect to BandsInTown API
-function bandsInTownInstance() {}
+function fetchBandsInTown() {
 
-export { fetchSkiddle, dataThistleInstance, bandsInTownInstance };
+}
+
+export { fetchSkiddle, fetchDataThistle, fetchBandsInTown };
