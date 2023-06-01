@@ -4,15 +4,9 @@
 			"runtime": "vercel-php@0.6.0"
 		}
 	},
-	"builds": [
-        {
-            "src": "./dashboard/dist",
-            "use": "@vercel/static"
-        }
-    ],
 	"rewrites": [
 		{
-			"source": "/skiddle-api",
+			"source": "/(.*)",
 			"destination": "/api/index.php"
 		}
 	]
