@@ -6,10 +6,6 @@
     },
     "rewrites": [
         {
-            "source": "/(.*)",
-            "destination": "/index.html"
-        },
-        {
             "source": "/skiddle-api",
             "destination": "/api/index.php"
         }
