@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 import '../styles/api.css';
 
 export function Skiddle(props) {
-	const { setApiEndpoint, setApiParams } = props;
-	const [paramsObj, setParamsObj] = useState({});
+	const { setApiType, setApiSingleId, setApiParams } = props;
+	const [params, setParams] = useState({});
 
 	const [searchType, setSearchType] = useState('events');
 	const [isIndivSearch, setIsIndivSearch] = useState(false);
@@ -38,75 +38,98 @@ export function Skiddle(props) {
 	// Add search parameters to url
 	function addParam(key, value) {
 		const prevParams = Object.fromEntries(
-			Object.entries(paramsObj).filter(([k, v]) => k !== key)
+			Object.entries(params).filter(([k, v]) => k !== key)
 		);
 		if (value === '' || value === false) {
-			setParamsObj({ ...prevParams });
+			setParams({ ...prevParams });
 		} else {
-			setParamsObj({ ...prevParams, [key]: value });
+			setParams({ ...prevParams, [key]: value });
 		}
 	}
 
 	// Remove search parameters from url
 	function removeParams(keys) {
-		let newParams = { ...paramsObj };
+		let newParams = { ...params };
 		keys.forEach((key) => {
 			newParams = Object.fromEntries(
 				Object.entries(newParams).filter(([k, v]) => k !== key)
 			);
 		});
-		setParamsObj({ ...newParams });
+		setParams({ ...newParams });
 	}
 
-	// Clear individual search input
-	useEffect(() => {
+	// Clear add inputs
+	function clearInput() {
+		setIsIndivSearch(false);
+		setIncludeDescription(false);
+		setIncludeTypeIdSearch(false);
 		setIndivId('');
-	}, [isIndivSearch]);
-
-	// Clear geo search inputs
-	useEffect(() => {
 		setLatitude('');
 		setLongitude('');
 		setCity('');
 		setRadius('');
-		removeParams(['latitude', 'longitude', 'city', 'radius']);
-	}, [canGeoSearch, isLatLongGeo]);
+		setIdSearchType('');
+		setVenueId('');
+		setBrandId('');
+		setArtistId('');
+		setGenreId('');
+		setKeyword('');
+		setMinDate('');
+		setMaxDate('');
+		setType('');
+		removeParams([
+			'description', 
+			'latitude', 'longitude', 'city', 'radius', 
+			'venueid', 'b', 'a', 'g', 
+			'keyword', 'name', 'minDate', 'maxDate', 'eventcode', 'type', 'limit'
+		]);
+	}
 
-	// Clear type id search inputs
-	useEffect(() => {
+	// Change search type option and input settings
+	function changeType(type) {
+		setApiType(type);
+		setSearchType(type);
+		setCanGeoSearch(type === 'events' || type === 'venues');
+		setCanKeywordSearch(type === 'events' || type === 'artists');
+		setCanTypeSearch(type === 'events' || type === 'venues');
+		setLimit(type === 'artists' ? 10 : 20);
+
+		clearInput();
+	}
+
+	// Change type ID search option
+	function changeIdSearchType(type) {
+		setIdSearchType(type);
 		setVenueId('');
 		setBrandId('');
 		setArtistId('');
 		setGenreId('');
 		removeParams(['venueid', 'b', 'a', 'g']);
-	}, [includeTypeIdSearch, idSearchType]);
+	}
 
-	// Clear keyword search input
+	// Toggle individual type search
+	function toggleIndivSearch() {
+		setIsIndivSearch(!isIndivSearch);
+		setIndivId('');
+	}
+
+	// Toggle type ID search
+	function toggleTypeIdSearch() {
+		setIncludeTypeIdSearch(!includeTypeIdSearch);
+		setIdSearchType('');
+		setVenueId('');
+		setBrandId('');
+		setArtistId('');
+		setGenreId('');
+		removeParams(['venueid', 'b', 'a', 'g']);
+	}
+
+	// Set search type, individual type ID & url for paramter
 	useEffect(() => {
-		setKeyword('');
-		removeParams(['events', 'name']);
-	}, [canKeywordSearch]);
-
-	// Clear type search input
-	useEffect(() => {
-		setType('');
-		removeParams(['eventcode', 'type']);
-	}, [canTypeSearch]);
-
-	// Change search type & parameters in url
-	useEffect(() => {
-		setApiParams(new URLSearchParams(paramsObj));
-
-		if (isIndivSearch) {
-			setApiEndpoint(`${searchType}/${indivId}`);
-			} else {
-			setApiEndpoint(`${searchType}`);
-		}
-
-		setCanGeoSearch(searchType === 'events' || searchType === 'venues');
-		setCanKeywordSearch(searchType === 'events' || searchType === 'artists');
-		setCanTypeSearch(searchType === 'events' || searchType === 'venues');
-	}, [searchType, paramsObj, indivId]);
+		setApiType(searchType);
+		setApiSingleId(isIndivSearch ? indivId : null);
+		setApiParams(params);
+	}, [params, indivId]);
 
 	return (
 		<div className='api-container'>
@@ -117,7 +140,7 @@ export function Skiddle(props) {
 					<span className='option-title'>Select search type:</span>
 					<div
 						className='search-type-options'
-						onChange={(e) => setSearchType(e.target.value)}
+						onChange={(e) => changeType(e.target.value)}
 					>
 						<label htmlFor='events-radio'>
 							<input
@@ -147,24 +170,6 @@ export function Skiddle(props) {
 							/>
 							Artists
 						</label>
-						<label htmlFor='genres-radio'>
-							<input
-								type='radio'
-								name='search-type'
-								id='genres-radio'
-								value='genres'
-							/>
-							Genres
-						</label>
-						<label htmlFor='brands-radio'>
-							<input
-								type='radio'
-								name='search-type'
-								id='brands-radio'
-								value='brands'
-							/>
-							Brands
-						</label>
 					</div>
 
 					{/* Checkbox select individual record ID search */}
@@ -174,8 +179,8 @@ export function Skiddle(props) {
 							type='checkbox'
 							name='individual-search-checkbox'
 							className='search-checkbox'
-							value={isIndivSearch}
-							onChange={() => setIsIndivSearch(!isIndivSearch)}
+							checked={isIndivSearch}
+							onChange={() => toggleIndivSearch()}
 						/>
 					</label>
 					<label
@@ -327,8 +332,8 @@ export function Skiddle(props) {
 							type='checkbox'
 							name='type-id-search-checkbox'
 							className='search-checkbox'
-							value={includeTypeIdSearch}
-							onChange={() => setIncludeTypeIdSearch(!includeTypeIdSearch)}
+							checked={includeTypeIdSearch}
+							onChange={() => toggleTypeIdSearch()}
 						/>
 					</label>
 					<div
@@ -344,8 +349,9 @@ export function Skiddle(props) {
 								name='type-id-search-option'
 								id='venue-id-radio'
 								value='venue'
+								checked={idSearchType === 'venue'}
 								disabled={!includeTypeIdSearch}
-								onChange={(e) => setIdSearchType(e.target.value)}
+								onChange={(e) => changeIdSearchType(e.target.value)}
 							/>
 							Venue ID:
 						</label>
@@ -375,7 +381,7 @@ export function Skiddle(props) {
 								id='brand-id-radio'
 								value='brand'
 								disabled={!includeTypeIdSearch}
-								onChange={(e) => setIdSearchType(e.target.value)}
+								onChange={(e) => changeIdSearchType(e.target.value)}
 							/>
 							Brand ID:
 						</label>
@@ -384,6 +390,7 @@ export function Skiddle(props) {
 							name='b'
 							id='brand-id-input'
 							disabled={idSearchType !== 'brand'}
+							checked={idSearchType === 'brand'}
 							value={brandId}
 							onChange={(e) => {
 								setBrandId(e.target.value);
@@ -403,7 +410,7 @@ export function Skiddle(props) {
 								id='artist-id-radio'
 								value='artist'
 								disabled={!includeTypeIdSearch}
-								onChange={(e) => setIdSearchType(e.target.value)}
+								onChange={(e) => changeIdSearchType(e.target.value)}
 							/>
 							Artist ID:
 						</label>
@@ -412,6 +419,7 @@ export function Skiddle(props) {
 							name='a'
 							id='artist-id-input'
 							disabled={idSearchType !== 'artist'}
+							checked={idSearchType === 'artist'}
 							value={artistId}
 							onChange={(e) => {
 								setArtistId(e.target.value);
@@ -431,7 +439,7 @@ export function Skiddle(props) {
 								id='genre-id-radio'
 								value='genre'
 								disabled={!includeTypeIdSearch}
-								onChange={(e) => setIdSearchType(e.target.value)}
+								onChange={(e) => changeIdSearchType(e.target.value)}
 							/>
 							Genre ID:
 						</label>
@@ -440,6 +448,7 @@ export function Skiddle(props) {
 							name='g'
 							id='genre-id-input'
 							disabled={idSearchType !== 'genre'}
+							checked={idSearchType === 'genre'}
 							value={genreId}
 							onChange={(e) => {
 								setGenreId(e.target.value);
@@ -550,6 +559,7 @@ export function Skiddle(props) {
 }
 
 Skiddle.propTypes = {
-	setApiEndpoint: PropTypes.func,
-	setApiParams: PropTypes.func
+	setApiType: PropTypes.func,
+	setApiSingleId: PropTypes.func,
+	setApiParams: PropTypes.func,
 };

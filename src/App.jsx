@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { fetchSkiddle } from './fetchApi.js';
+import { fetchBandsInTown, fetchDataThistle, fetchSkiddle } from './fetchApi.js';
 
 import Header from './components/Header';
 import { Skiddle } from './components/Skiddle';
@@ -9,31 +9,38 @@ import './App.css';
 function App() {
 	const [selectedApi, setSelectedApi] = useState('Skiddle');
 	const [apiUrl, setApiUrl] = useState('');
-	const [apiEndpoint, setApiEndpoint] = useState('');
+	const [apiType, setApiType] = useState('');
+	const [apiSingleId, setApiSingleId] = useState(null);
 	const [apiParams, setApiParams] = useState('');
 	const [apiFetch, setApiFetch] = useState(null);
 
+	const [records, setRecords] = useState([]);
+
 	// Fetch data from API
 	async function fetchData() {
-		await apiFetch(apiEndpoint, apiParams)
+		await apiFetch(apiType, apiSingleId, apiParams)
 			.then((response) => {
 				console.log(response);
+				setRecords([...records, ...response.records]);
 			})
 			.catch((err) => {
 				console.error(err);
 			});
 	}
 
+	// Set selected API axios method to fetch data
 	useEffect(() => {
 		if (selectedApi === 'Skiddle') {
-			setApiUrl('https://www.skiddle.com/api/v1/');
+			setApiUrl(import.meta.env.VITE_SKIDDLE_API_URL);
 			setApiFetch(() => fetchSkiddle);
 		}
 		if (selectedApi === 'DataThistle') {
-			setApiFetch(null);
+			setApiUrl(import.meta.env.VITE_DATATHISTLE_API_URL);
+			setApiFetch(() => fetchDataThistle);
 		}
 		if (selectedApi === 'BandsInTown') {
-			setApiFetch(null);
+			setApiUrl(import.meta.env.VITE_BANDSINTOWN_API_URL);
+			setApiFetch(() => fetchBandsInTown);
 		}
 	}, [selectedApi]);
 
@@ -46,7 +53,9 @@ function App() {
 				<p>
 					<b>
 						{apiUrl}
-						{apiEndpoint}/?{apiParams.toString()}
+						{apiType}
+						{apiSingleId ? `/${apiSingleId}` : ''}
+						/?{new URLSearchParams(apiParams).toString()}
 					</b>
 				</p>
 
@@ -59,7 +68,8 @@ function App() {
 
 				{selectedApi === 'Skiddle' && (
 					<Skiddle
-						setApiEndpoint={setApiEndpoint}
+						setApiType={setApiType}
+						setApiSingleId={setApiSingleId}
 						setApiParams={setApiParams}
 					/>
 				)}
