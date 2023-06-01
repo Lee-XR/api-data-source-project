@@ -6,7 +6,6 @@ async function fetchSkiddle(type, id, params) {
 		import.meta.env.MODE === 'production'
 			? import.meta.env.VITE_SKIDDLE_SDK_PROD_URL
 			: import.meta.env.VITE_SKIDDLE_SDK_DEV_URL;
-	console.log(2, url);
 	return await axios
 		.post(url, {
 			type,
