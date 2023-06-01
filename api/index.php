@@ -1,9 +1,9 @@
 <?php
 // phpinfo();
 
-require_once(__DIR__ . '/../api/vendor/autoload.php');
+require_once(__DIR__ . '/vendor/autoload.php');
 
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/');
 $dotenv->load();
 
 $origin = $_ENV['NODE_ENV'] === 'production' ? $_ENV['PROD_ORIGIN_URL'] : $_ENV['DEV_ORIGIN_URL'];
