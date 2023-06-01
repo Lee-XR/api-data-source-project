@@ -1,13 +1,19 @@
 {
-    "functions": {
-        "api/*.php": {
-            "runtime": "vercel-php@0.6.0"
-        }
-    },
-    "rewrites": [
+	"functions": {
+		"api/*.php": {
+			"runtime": "vercel-php@0.6.0"
+		}
+	},
+	"builds": [
         {
-            "source": "/skiddle-api",
-            "destination": "/api/index.php"
+            "src": "./dashboard/dist",
+            "use": "@vercel/static"
         }
-    ]
+    ],
+	"rewrites": [
+		{
+			"source": "/skiddle-api",
+			"destination": "/api/index.php"
+		}
+	]
 }
