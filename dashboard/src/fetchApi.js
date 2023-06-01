@@ -2,8 +2,12 @@ import axios from 'axios';
 
 // Instance connect to Skiddle API
 async function fetchSkiddle(type, id, params) {
+	const url =
+		import.meta.env.MODE === 'production'
+			? import.meta.env.VITE_SKIDDLE_SDK_PROD_URL
+			: import.meta.env.VITE_SKIDDLE_SDK_DEV_URL;
 	return await axios
-		.post(import.meta.env.VITE_SKIDDLE_SDK_DEV_URL, {
+		.post(url, {
 			type,
 			id,
 			params,
@@ -20,13 +24,9 @@ async function fetchSkiddle(type, id, params) {
 }
 
 // Instance connect to DataThistle API
-function fetchDataThistle() {
-	
-}
+function fetchDataThistle() {}
 
 // Instance connect to BandsInTown API
-function fetchBandsInTown() {
-
-}
+function fetchBandsInTown() {}
 
 export { fetchSkiddle, fetchDataThistle, fetchBandsInTown };
