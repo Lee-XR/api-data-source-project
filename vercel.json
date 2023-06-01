@@ -2,13 +2,12 @@
 	"functions": {
 		"api/*.php": {
 			"runtime": "vercel-php@0.6.0"
-		}
+		},
+        "dashboard/dist": {
+            "use": "@vercel/static"
+        }
 	},
 	"rewrites": [
-        {
-            "source": "/",
-            "destination": "/dashboard/dist/index.html"
-        },
 		{
 			"source": "/skiddle-api",
 			"destination": "/api/index.php"
