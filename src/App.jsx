@@ -18,6 +18,7 @@ function App() {
 
 	// Fetch data from API
 	async function fetchData() {
+		console.log(1, 'fetch');
 		await apiFetch(apiType, apiSingleId, apiParams)
 			.then((response) => {
 				console.log(response);
