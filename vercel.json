@@ -5,8 +5,12 @@
 		}
 	},
 	"rewrites": [
+        {
+            "source": "/",
+            "destination": "/dashboard/dist/index.html"
+        },
 		{
-			"source": "/(.*)",
+			"source": "/skiddle-api",
 			"destination": "/api/index.php"
 		}
 	]
