@@ -17,7 +17,13 @@ async function fetchSkiddle(type, id, params) {
 			};
 		})
 		.catch((error) => {
-			return error;
+			let errorMsg = '';
+			if (error.response) {
+				errorMsg = error.response.data.error;
+			} else {
+				errorMsg = error.message;
+			}
+			return { error: errorMsg};
 		});
 }
 

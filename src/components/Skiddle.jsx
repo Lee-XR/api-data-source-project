@@ -3,8 +3,94 @@ import PropTypes from 'prop-types';
 
 import '../styles/api.css';
 
+/*
+	EVENT & VENUE types code & type name
+	~ EVENT code must all be UPPERCASE
+	~ VENUE code must all be lowercase
+ */
+const eventTypes = [
+	{
+		code: 'FEST',
+		type: 'Festivals'
+	},
+	{
+		code: 'LIVE',
+		type: 'Live Music'
+	},
+	{
+		code: 'CLUB',
+		type: 'Clubbing / Dance Music'
+	},
+	{
+		code: 'DATE',
+		type: 'Dating Event'
+	},
+	{
+		code: 'THEATRE',
+		type: 'Theatre / Dance'
+	},
+	{
+		code: 'COMEDY',
+		type: 'Comedy'
+	},
+	{
+		code: 'EXHIB',
+		type: 'Exhibitions and Attractions'
+	},
+	{
+		code: 'KIDS',
+		type: 'Kids / Family Event'
+	},
+	{
+		code: 'BARPUB',
+		type: 'Bar / Pub Event'
+	},
+	{
+		code: 'LGB',
+		type: 'Gay / Lesbian Event'
+	},
+	{
+		code: 'SPORT',
+		type: 'Sporting Event'
+	},
+	{
+		code: 'ARTS',
+		type: 'The Arts'
+	},
+]
+const venueTypes = [
+	{
+		code: 'b',
+		type: 'Bar / Pub'
+	},
+	{
+		code: 'n',
+		type: 'Nightclub'
+	},
+	{
+		code: 'l',
+		type: 'Live Music'
+	},
+	{
+		code: 'o',
+		type: 'Outdoor Venue'
+	},
+	{
+		code: 't',
+		type: 'Theatre'
+	},
+	{
+		code: 's',
+		type: 'Sports Ground'
+	},
+	{
+		code: 'g',
+		type: 'Gallery'
+	},
+]
+
 export function Skiddle(props) {
-	const { setApiType, setApiSingleId, setApiParams } = props;
+	const { setApiType, setApiSingleId, setApiParams, setResetApi } = props;
 	const [params, setParams] = useState({});
 
 	const [searchType, setSearchType] = useState('events');
@@ -125,6 +211,11 @@ export function Skiddle(props) {
 		removeParams(['venueid', 'b', 'a', 'g']);
 	}
 
+	// Set reset settings function
+	useEffect(() => {
+		setResetApi(() => clearInput);
+	}, []);
+
 	// Set search type, individual type ID & url for paramter
 	useEffect(() => {
 		setApiType(searchType);
@@ -194,7 +285,7 @@ export function Skiddle(props) {
 							id='individual-search-input'
 							disabled={!isIndivSearch}
 							value={indivId}
-							onChange={(e) => setIndivId(e.target.value)}
+							onChange={(e) => setIndivId(parseInt(e.target.value) || '')}
 						/>
 					</label>
 
@@ -260,8 +351,8 @@ export function Skiddle(props) {
 									disabled={!canGeoSearch}
 									value={latitude}
 									onChange={(e) => {
-										setLatitude(e.target.value);
-										addParam(e.target.name, e.target.value);
+										setLatitude(parseInt(e.target.value) || '');
+										addParam(e.target.name, parseInt(e.target.value) || '');
 									}}
 								/>
 							</label>
@@ -276,8 +367,8 @@ export function Skiddle(props) {
 									disabled={!canGeoSearch}
 									value={longitude}
 									onChange={(e) => {
-										setLongitude(e.target.value);
-										addParam(e.target.name, e.target.value);
+										setLongitude(parseInt(e.target.value) || '');
+										addParam(e.target.name, parseInt(e.target.value) || '');
 									}}
 								/>
 							</label>
@@ -312,8 +403,8 @@ export function Skiddle(props) {
 							disabled={!canGeoSearch}
 							value={radius}
 							onChange={(e) => {
-								setRadius(e.target.value);
-								addParam(e.target.name, e.target.value);
+								setRadius(parseInt(e.target.value) || '');
+								addParam(e.target.name, parseInt(e.target.value) || '');
 							}}
 						/>
 					</label>
@@ -363,8 +454,8 @@ export function Skiddle(props) {
 							disabled={idSearchType !== 'venue'}
 							value={venueId}
 							onChange={(e) => {
-								setVenueId(e.target.value);
-								addParam(e.target.name, e.target.value);
+								setVenueId(parseInt(e.target.value));
+								addParam(e.target.name, parseInt(e.target.value));
 							}}
 						/>
 					</div>
@@ -394,8 +485,8 @@ export function Skiddle(props) {
 							checked={idSearchType === 'brand'}
 							value={brandId}
 							onChange={(e) => {
-								setBrandId(e.target.value);
-								addParam(e.target.name, e.target.value);
+								setBrandId(parseInt(e.target.value));
+								addParam(e.target.name, parseInt(e.target.value));
 							}}
 						/>
 					</div>
@@ -423,8 +514,8 @@ export function Skiddle(props) {
 							checked={idSearchType === 'artist'}
 							value={artistId}
 							onChange={(e) => {
-								setArtistId(e.target.value);
-								addParam(e.target.name, e.target.value);
+								setArtistId(parseInt(e.target.value));
+								addParam(e.target.name, parseInt(e.target.value));
 							}}
 						/>
 					</div>
@@ -452,8 +543,8 @@ export function Skiddle(props) {
 							checked={idSearchType === 'genre'}
 							value={genreId}
 							onChange={(e) => {
-								setGenreId(e.target.value);
-								addParam(e.target.name, e.target.value);
+								setGenreId(parseInt(e.target.value));
+								addParam(e.target.name, parseInt(e.target.value));
 							}}
 						/>
 					</div>
@@ -534,6 +625,16 @@ export function Skiddle(props) {
 							>
 								Select a type
 							</option>
+							{searchType === 'events' && eventTypes.map((eventType) => (
+								<option key={eventType.code} value={eventType.code}>
+									{eventType.type}
+								</option>
+							))}
+							{searchType === 'venues' && venueTypes.map((venueType) => (
+								<option key={venueType.code} value={venueType.code}>
+									{venueType.type}
+								</option>
+							))}
 						</select>
 					</label>
 
@@ -550,8 +651,8 @@ export function Skiddle(props) {
 							max={100}
 							value={limit}
 							onChange={(e) => {
-								setLimit(e.target.value);
-								addParam(e.target.name, e.target.value);
+								setLimit(parseInt(e.target.value) || '');
+								addParam(e.target.name, parseInt(e.target.value) || '');
 							}}
 						/>
 					</label>
@@ -567,8 +668,8 @@ export function Skiddle(props) {
 							id='return-offset'
 							value={offset}
 							onChange={(e) => {
-								setOffset(e.target.value);
-								addParam(e.target.name, e.target.value);
+								setOffset(parseInt(e.target.value) || '');
+								addParam(e.target.name, parseInt(e.target.value) || '');
 							}}
 						/>
 					</label>
@@ -582,4 +683,5 @@ Skiddle.propTypes = {
 	setApiType: PropTypes.func,
 	setApiSingleId: PropTypes.func,
 	setApiParams: PropTypes.func,
+	setResetApi: PropTypes.func
 };
