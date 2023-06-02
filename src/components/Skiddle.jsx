@@ -3,6 +3,92 @@ import PropTypes from 'prop-types';
 
 import '../styles/api.css';
 
+/*
+	EVENT & VENUE types code & type name
+	~ EVENT code must all be UPPERCASE
+	~ VENUE code must all be lowercase
+ */
+const eventTypes = [
+	{
+		code: 'FEST',
+		type: 'Festivals'
+	},
+	{
+		code: 'LIVE',
+		type: 'Live Music'
+	},
+	{
+		code: 'CLUB',
+		type: 'Clubbing / Dance Music'
+	},
+	{
+		code: 'DATE',
+		type: 'Dating Event'
+	},
+	{
+		code: 'THEATRE',
+		type: 'Theatre / Dance'
+	},
+	{
+		code: 'COMEDY',
+		type: 'Comedy'
+	},
+	{
+		code: 'EXHIB',
+		type: 'Exhibitions and Attractions'
+	},
+	{
+		code: 'KIDS',
+		type: 'Kids / Family Event'
+	},
+	{
+		code: 'BARPUB',
+		type: 'Bar / Pub Event'
+	},
+	{
+		code: 'LGB',
+		type: 'Gay / Lesbian Event'
+	},
+	{
+		code: 'SPORT',
+		type: 'Sporting Event'
+	},
+	{
+		code: 'ARTS',
+		type: 'The Arts'
+	},
+]
+const venueTypes = [
+	{
+		code: 'b',
+		type: 'Bar / Pub'
+	},
+	{
+		code: 'n',
+		type: 'Nightclub'
+	},
+	{
+		code: 'l',
+		type: 'Live Music'
+	},
+	{
+		code: 'o',
+		type: 'Outdoor Venue'
+	},
+	{
+		code: 't',
+		type: 'Theatre'
+	},
+	{
+		code: 's',
+		type: 'Sports Ground'
+	},
+	{
+		code: 'g',
+		type: 'Gallery'
+	},
+]
+
 export function Skiddle(props) {
 	const { setApiType, setApiSingleId, setApiParams, setResetApi } = props;
 	const [params, setParams] = useState({});
@@ -539,6 +625,16 @@ export function Skiddle(props) {
 							>
 								Select a type
 							</option>
+							{searchType === 'events' && eventTypes.map((eventType) => (
+								<option key={eventType.code} value={eventType.code}>
+									{eventType.type}
+								</option>
+							))}
+							{searchType === 'venues' && venueTypes.map((venueType) => (
+								<option key={venueType.code} value={venueType.code}>
+									{venueType.type}
+								</option>
+							))}
 						</select>
 					</label>
 
