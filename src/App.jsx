@@ -20,7 +20,7 @@ function App() {
 
 	const [isFetching, setIsFetching] = useState(false);
 	const [totalRecords, setTotalRecords] = useState(0);
-	const [records, setRecords] = useState({});
+	const [records, setRecords] = useState([]);
 
 	// Fetch data from API
 	async function fetchData() {
@@ -28,7 +28,7 @@ function App() {
 		await apiFetch(apiType, apiSingleId, apiParams)
 			.then((response) => {
 				setTotalRecords(parseInt(response.totalHits));
-				setRecords({...records, ...response.records});
+				setRecords([...records, ...response.records]);
 				setIsFetching(false);
 			})
 			.catch((err) => {
@@ -115,7 +115,7 @@ function App() {
 						{isFetching && <span>Fetching...</span>}
 						{!isFetching && (
 							<span>
-								Returned <b>{Object.keys(records).length}</b> of <b>{totalRecords}</b>{' '}
+								Returned <b>{records.length}</b> of <b>{totalRecords}</b>{' '}
 								results
 							</span>
 						)}
