@@ -16,8 +16,8 @@ function App() {
 	const [apiType, setApiType] = useState('');
 	const [apiSingleId, setApiSingleId] = useState(null);
 	const [apiParams, setApiParams] = useState('');
-	const [apiFetch, setApiFetch] = useState(null);
-	const [apiReset, setApiReset] = useState(null);
+	const [fetchApi, setFetchApi] = useState(null);
+	const [resetApi, setResetApi] = useState(null);
 
 	const [isFetching, setIsFetching] = useState(false);
 	const [isError, setIsError] = useState(false);
@@ -29,7 +29,7 @@ function App() {
 	async function fetchData() {
 		setIsFetching(true);
 		setIsError(false);
-		await apiFetch(apiType, apiSingleId, apiParams)
+		await fetchApi(apiType, apiSingleId, apiParams)
 			.then((response) => {
 				if (response.error) {
 					setIsError(true);
@@ -47,6 +47,25 @@ function App() {
 				console.log(err);
 				console.error(err);
 			});
+	}
+
+	// Reset API options
+	function resetOptions() {
+		const reset = confirm("Are you sure to reset all options?");
+		if (reset === true) {
+			resetApi();
+		}
+	}
+
+	// Reset records
+	function resetRecords() {
+		const reset = confirm("Are you sure to reset all records?");
+		if (reset === true) {
+			setTotalRecords(0);
+			setRecords([]);
+			setIsFetching(false);
+			setIsError(false);
+		}
 	}
 
 	// Download records as JSON file
@@ -68,15 +87,15 @@ function App() {
 	useEffect(() => {
 		if (selectedApi === 'Skiddle') {
 			setApiUrl(import.meta.env.VITE_SKIDDLE_API_URL);
-			setApiFetch(() => fetchSkiddle);
+			setFetchApi(() => fetchSkiddle);
 		}
 		if (selectedApi === 'DataThistle') {
 			setApiUrl(import.meta.env.VITE_DATATHISTLE_API_URL);
-			setApiFetch(() => fetchDataThistle);
+			setFetchApi(() => fetchDataThistle);
 		}
 		if (selectedApi === 'BandsInTown') {
 			setApiUrl(import.meta.env.VITE_BANDSINTOWN_API_URL);
-			setApiFetch(() => fetchBandsInTown);
+			setFetchApi(() => fetchBandsInTown);
 		}
 	}, [selectedApi]);
 
@@ -116,7 +135,8 @@ function App() {
 				<div className='btns'>
 					<button onClick={fetchData}>Fetch Data</button>
 					<button onClick={downloadJson}>Download JSON</button>
-					<button onClick={() => apiReset()}>Reset Options</button>
+					<button onClick={resetOptions}>Reset Options</button>
+					<button onClick={resetRecords}>Reset Results</button>
 					{/* <button onClick={downloadXML}>Download XML</button> */}
 					{/* <button onClick={downloadCSV}>Download CSV</button> */}
 				</div>
@@ -126,7 +146,7 @@ function App() {
 						setApiType={setApiType}
 						setApiSingleId={setApiSingleId}
 						setApiParams={setApiParams}
-						setApiReset={setApiReset}
+						setResetApi={setResetApi}
 					/>
 				)}
 			</main>

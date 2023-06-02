@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import '../styles/api.css';
 
 export function Skiddle(props) {
-	const { setApiType, setApiSingleId, setApiParams, setApiReset } = props;
+	const { setApiType, setApiSingleId, setApiParams, setResetApi } = props;
 	const [params, setParams] = useState({});
 
 	const [searchType, setSearchType] = useState('events');
@@ -127,7 +127,7 @@ export function Skiddle(props) {
 
 	// Set reset settings function
 	useEffect(() => {
-		setApiReset(() => clearInput);
+		setResetApi(() => clearInput);
 	}, []);
 
 	// Set search type, individual type ID & url for paramter
@@ -587,5 +587,5 @@ Skiddle.propTypes = {
 	setApiType: PropTypes.func,
 	setApiSingleId: PropTypes.func,
 	setApiParams: PropTypes.func,
-	setApiReset: PropTypes.func
+	setResetApi: PropTypes.func
 };
