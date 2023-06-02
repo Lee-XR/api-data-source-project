@@ -17,23 +17,35 @@ function App() {
 	const [apiSingleId, setApiSingleId] = useState(null);
 	const [apiParams, setApiParams] = useState('');
 	const [apiFetch, setApiFetch] = useState(null);
+	const [apiReset, setApiReset] = useState(null);
 
 	const [isFetching, setIsFetching] = useState(false);
+	const [isError, setIsError] = useState(false);
+	const [errorMsg, setErrorMsg] = useState('');
 	const [totalRecords, setTotalRecords] = useState(0);
 	const [records, setRecords] = useState([]);
 
 	// Fetch data from API
 	async function fetchData() {
 		setIsFetching(true);
+		setIsError(false);
 		await apiFetch(apiType, apiSingleId, apiParams)
 			.then((response) => {
-				setTotalRecords(parseInt(response.totalHits));
-				setRecords([...records, ...response.records]);
+				if (response.error) {
+					setIsError(true);
+					setErrorMsg(response.error);
+				} else {
+					setTotalRecords(parseInt(response.totalHits));
+					setRecords([...records, ...response.records]);
+				}
 				setIsFetching(false);
 			})
 			.catch((err) => {
 				setIsFetching(false);
-				console.error(err.response.data);
+				setIsError(true);
+				setErrorMsg(err);
+				console.log(err);
+				console.error(err);
 			});
 	}
 
@@ -51,20 +63,6 @@ function App() {
 		link.click();
 		window.URL.revokeObjectURL(url);
 	}
-
-	// Download records as XML file
-	// function downloadCSV() {
-	// 	// const csvData = JSON.stringify(records, null, 2);
-	// 	try {
-	// 		const csvData = JSON.stringify(records, null, 2);
-
-	// 		const csvParser = new Parser();
-	// 		const csv = csvParser.parse(csvData);
-	// 		console.log(csv);
-	// 	} catch (err) {
-	// 		console.error(err);
-	// 	}
-	// }
 
 	// Set selected API axios method to fetch data
 	useEffect(() => {
@@ -103,23 +101,24 @@ function App() {
 					</b>
 				</p>
 
-				<div className='selection-row'>
-					<div className='btns'>
-						<button onClick={fetchData}>Fetch Data</button>
-						<button onClick={downloadJson}>Download JSON</button>
-						{/* <button onClick={downloadXML}>Download XML</button> */}
-						{/* <button onClick={downloadCSV}>Download CSV</button> */}
-					</div>
+				<p>
+					{isFetching && !isError && <span>Fetching...</span>}
+					{!isFetching && !isError && (
+						<span>
+							Returned <b>{records.length}</b> of <b>{totalRecords}</b> results
+						</span>
+					)}
+					{!isFetching && isError && (
+						<span style={{ color: 'red' }}>{errorMsg}</span>
+					)}
+				</p>
 
-					<div>
-						{isFetching && <span>Fetching...</span>}
-						{!isFetching && (
-							<span>
-								Returned <b>{records.length}</b> of <b>{totalRecords}</b>{' '}
-								results
-							</span>
-						)}
-					</div>
+				<div className='btns'>
+					<button onClick={fetchData}>Fetch Data</button>
+					<button onClick={downloadJson}>Download JSON</button>
+					<button onClick={() => apiReset()}>Reset Options</button>
+					{/* <button onClick={downloadXML}>Download XML</button> */}
+					{/* <button onClick={downloadCSV}>Download CSV</button> */}
 				</div>
 
 				{selectedApi === 'Skiddle' && (
@@ -127,6 +126,7 @@ function App() {
 						setApiType={setApiType}
 						setApiSingleId={setApiSingleId}
 						setApiParams={setApiParams}
+						setApiReset={setApiReset}
 					/>
 				)}
 			</main>
