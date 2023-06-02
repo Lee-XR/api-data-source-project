@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react';
-import { fetchBandsInTown, fetchDataThistle, fetchSkiddle } from './fetchApi.js';
+import {
+	fetchBandsInTown,
+	fetchDataThistle,
+	fetchSkiddle,
+} from './fetchApi.js';
 
 import Header from './components/Header';
 import { Skiddle } from './components/Skiddle';
@@ -14,19 +18,53 @@ function App() {
 	const [apiParams, setApiParams] = useState('');
 	const [apiFetch, setApiFetch] = useState(null);
 
-	const [records, setRecords] = useState([]);
+	const [isFetching, setIsFetching] = useState(false);
+	const [totalRecords, setTotalRecords] = useState(0);
+	const [records, setRecords] = useState({});
 
 	// Fetch data from API
 	async function fetchData() {
+		setIsFetching(true);
 		await apiFetch(apiType, apiSingleId, apiParams)
 			.then((response) => {
-				console.log(response);
-				setRecords([...records, ...response.records]);
+				setTotalRecords(parseInt(response.totalHits));
+				setRecords({...records, ...response.records});
+				setIsFetching(false);
 			})
 			.catch((err) => {
-				console.error(err);
+				setIsFetching(false);
+				console.error(err.response.data);
 			});
 	}
+
+	// Download records as JSON file
+	function downloadJson() {
+		const jsonData = new Blob([JSON.stringify(records, null, 2)], {
+			type: 'application/json',
+		});
+		const url = window.URL.createObjectURL(jsonData);
+		const link = document.createElement('a');
+		link.style.display = 'none';
+		link.href = url;
+		link.download = `${selectedApi}-${apiType}.json`;
+		document.body.appendChild(link);
+		link.click();
+		window.URL.revokeObjectURL(url);
+	}
+
+	// Download records as XML file
+	// function downloadCSV() {
+	// 	// const csvData = JSON.stringify(records, null, 2);
+	// 	try {
+	// 		const csvData = JSON.stringify(records, null, 2);
+
+	// 		const csvParser = new Parser();
+	// 		const csv = csvParser.parse(csvData);
+	// 		console.log(csv);
+	// 	} catch (err) {
+	// 		console.error(err);
+	// 	}
+	// }
 
 	// Set selected API axios method to fetch data
 	useEffect(() => {
@@ -44,6 +82,12 @@ function App() {
 		}
 	}, [selectedApi]);
 
+	// Reset fetched records & total records count
+	useEffect(() => {
+		setTotalRecords(0);
+		setRecords([]);
+	}, [apiUrl, apiType]);
+
 	return (
 		<>
 			<Header setSelectedApi={setSelectedApi} />
@@ -59,11 +103,23 @@ function App() {
 					</b>
 				</p>
 
-				<div className='btns'>
-					<button onClick={fetchData}>Fetch Data</button>
-					<button onClick={fetchData}>Generate JSON</button>
-					<button onClick={fetchData}>Generate XML</button>
-					<button onClick={fetchData}>Generate CSV</button>
+				<div className='selection-row'>
+					<div className='btns'>
+						<button onClick={fetchData}>Fetch Data</button>
+						<button onClick={downloadJson}>Download JSON</button>
+						{/* <button onClick={downloadXML}>Download XML</button> */}
+						{/* <button onClick={downloadCSV}>Download CSV</button> */}
+					</div>
+
+					<div>
+						{isFetching && <span>Fetching...</span>}
+						{!isFetching && (
+							<span>
+								Returned <b>{Object.keys(records).length}</b> of <b>{totalRecords}</b>{' '}
+								results
+							</span>
+						)}
+					</div>
 				</div>
 
 				{selectedApi === 'Skiddle' && (

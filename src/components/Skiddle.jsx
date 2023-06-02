@@ -81,7 +81,7 @@ export function Skiddle(props) {
 			'description', 
 			'latitude', 'longitude', 'city', 'radius', 
 			'venueid', 'b', 'a', 'g', 
-			'keyword', 'name', 'minDate', 'maxDate', 'eventcode', 'type', 'limit'
+			'keyword', 'name', 'minDate', 'maxDate', 'eventcode', 'type', 'limit', 'offset'
 		]);
 	}
 
@@ -93,6 +93,7 @@ export function Skiddle(props) {
 		setCanKeywordSearch(type === 'events' || type === 'artists');
 		setCanTypeSearch(type === 'events' || type === 'venues');
 		setLimit(type === 'artists' ? 10 : 20);
+		setOffset(0);
 
 		clearInput();
 	}
@@ -545,9 +546,28 @@ export function Skiddle(props) {
 							type='number'
 							name='limit'
 							id='return-limit'
+							min={0}
+							max={100}
 							value={limit}
 							onChange={(e) => {
 								setLimit(e.target.value);
+								addParam(e.target.name, e.target.value);
+							}}
+						/>
+					</label>
+
+					<label
+						htmlFor='return-offset'
+						className='search-input'
+					>
+						<span className='option-title'>Return Offset:</span>
+						<input
+							type='number'
+							name='offset'
+							id='return-offset'
+							value={offset}
+							onChange={(e) => {
+								setOffset(e.target.value);
 								addParam(e.target.name, e.target.value);
 							}}
 						/>

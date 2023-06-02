@@ -6,20 +6,18 @@ async function fetchSkiddle(type, id, params) {
 		import.meta.env.MODE === 'production'
 			? import.meta.env.VITE_SKIDDLE_SDK_PROD_URL
 			: import.meta.env.VITE_SKIDDLE_SDK_DEV_URL;
+	const data = { type, id, params };
+
 	return await axios
-		.post(url, {
-			type,
-			id,
-			params,
-		})
+		.post(url, data)
 		.then((response) => {
 			return {
-				totalHits: response.data.totalcount,
-				records: response.data.results,
+				totalHits: response.data.totalcount || 0,
+				records: response.data.results || {},
 			};
 		})
 		.catch((error) => {
-			return error.response;
+			return error;
 		});
 }
 

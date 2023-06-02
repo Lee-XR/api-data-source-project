@@ -60,6 +60,12 @@ main {
   padding: 0 2rem;
 }
 
+.selection-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .btns {
   margin: 8px 0;
   display: flex;
