@@ -4,7 +4,7 @@ import '../App.css';
 
 const apiArray = ['Skiddle', 'DataThistle', 'BandsInTown'];
 
-const Header = (props) => {
+export function Header (props) {
     const { setSelectedApi } = props;
 	const [selectedNum, setSelectedNum] = useState(0);
 
@@ -24,10 +24,8 @@ const Header = (props) => {
 			</ul>
 		</header>
 	);
-};
+}
 
 Header.propTypes = {
     setSelectedApi: PropTypes.func
 }
-
-export default Header;

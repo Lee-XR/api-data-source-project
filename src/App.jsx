@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { fetchBandsInTown, fetchDataThistle, fetchSkiddle } from './fetchApi.js';
 
-import Header from './components/Header';
+import { Header } from './components/Header';
 import { Skiddle } from './components/Skiddle';
 import { DataThistle } from './components/DataThistle.jsx';
 import { BandsInTown } from './components/BandsInTown.jsx';
@@ -128,9 +128,11 @@ function App() {
 
 	return (
 		<>
+			{/* Header with API selection */}
 			<Header setSelectedApi={setSelectedApi} />
 
 			<main>
+				{/* API name, URL & search parameters */}
 				<h2>{selectedApi} API</h2>
 				<p>
 					<b>
@@ -141,6 +143,7 @@ function App() {
 					</b>
 				</p>
 
+				{/* Fetching, error & total results message */}
 				<p>
 					{isFetching && !isError && <span>Fetching...</span>}
 					{!isFetching && !isError && (
@@ -161,6 +164,7 @@ function App() {
 					{/* <button onClick={downloadCSV}>Download CSV</button> */}
 				</div>
 
+				{/* Display selected API options */}
 				<ApiComponent
 					setApiType={setApiType}
 					setApiSingleId={setApiSingleId}
