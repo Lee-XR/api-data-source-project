@@ -8,6 +8,22 @@ import { BandsInTown } from './components/BandsInTown.jsx';
 
 import './App.css';
 
+// Individual API component and fetch data function
+const ComponentMap = {
+	Skiddle: {
+		component: Skiddle,
+		fetchFunc: fetchSkiddle
+	},
+	DataThistle: {
+		component: DataThistle,
+		fetchFunc: fetchDataThistle
+	},
+	BandsInTown: {
+		component: BandsInTown,
+		fetchFunc: fetchBandsInTown
+	}
+};
+
 function App() {
 	const [selectedApi, setSelectedApi] = useState('Skiddle');
 	const [apiUrl, setApiUrl] = useState('');
@@ -23,12 +39,8 @@ function App() {
 	const [totalRecords, setTotalRecords] = useState(0);
 	const [records, setRecords] = useState([]);
 
-	const ComponentMap = {
-		Skiddle,
-		DataThistle,
-		BandsInTown
-	};
-	const ApiComponent = ComponentMap[selectedApi];
+	// Return selected API component
+	const ApiComponent = ComponentMap[selectedApi].component;
 
 	// Fetch data from API
 	async function fetchData() {
@@ -88,20 +100,24 @@ function App() {
 		window.URL.revokeObjectURL(url);
 	}
 
-	// Set selected API axios method to fetch data
+	// Set selected API URL & axios method to fetch data
 	useEffect(() => {
-		if (selectedApi === 'Skiddle') {
-			setApiUrl(import.meta.env.VITE_SKIDDLE_API_URL);
-			setFetchApi(() => fetchSkiddle);
-		}
-		if (selectedApi === 'DataThistle') {
-			setApiUrl(import.meta.env.VITE_DATATHISTLE_API_URL);
-			setFetchApi(() => fetchDataThistle);
-		}
-		if (selectedApi === 'BandsInTown') {
-			setApiUrl(import.meta.env.VITE_BANDSINTOWN_API_URL);
-			setFetchApi(() => fetchBandsInTown);
-		}
+		const uppercaseName = selectedApi.toUpperCase();
+		setApiUrl(import.meta.env[`VITE_${uppercaseName}_API_URL`]);
+		setFetchApi(() => ComponentMap[selectedApi].fetchFunc);
+
+		// if (selectedApi === 'Skiddle') {
+		// 	setApiUrl(import.meta.env.VITE_SKIDDLE_API_URL);
+		// 	setFetchApi(() => fetchSkiddle);
+		// }
+		// if (selectedApi === 'DataThistle') {
+		// 	setApiUrl(import.meta.env.VITE_DATATHISTLE_API_URL);
+		// 	setFetchApi(() => fetchDataThistle);
+		// }
+		// if (selectedApi === 'BandsInTown') {
+		// 	setApiUrl(import.meta.env.VITE_BANDSINTOWN_API_URL);
+		// 	setFetchApi(() => fetchBandsInTown);
+		// }
 	}, [selectedApi]);
 
 	// Reset fetched records & total records count
@@ -151,14 +167,6 @@ function App() {
 					setApiParams={setApiParams}
 					setResetApi={setResetApi}
 				/>
-				{/* {selectedApi === 'Skiddle' && (
-					<Skiddle
-						setApiType={setApiType}
-						setApiSingleId={setApiSingleId}
-						setApiParams={setApiParams}
-						setResetApi={setResetApi}
-					/>
-				)} */}
 			</main>
 
 			{/* <div className='data-count'>
