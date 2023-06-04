@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react';
-import {
-	fetchBandsInTown,
-	fetchDataThistle,
-	fetchSkiddle,
-} from './fetchApi.js';
+import { fetchBandsInTown, fetchDataThistle, fetchSkiddle } from './fetchApi.js';
 
 import Header from './components/Header';
 import { Skiddle } from './components/Skiddle';
+import { DataThistle } from './components/DataThistle.jsx';
+import { BandsInTown } from './components/BandsInTown.jsx';
 
 import './App.css';
 
@@ -24,6 +22,13 @@ function App() {
 	const [errorMsg, setErrorMsg] = useState('');
 	const [totalRecords, setTotalRecords] = useState(0);
 	const [records, setRecords] = useState([]);
+
+	const ComponentMap = {
+		Skiddle,
+		DataThistle,
+		BandsInTown
+	};
+	const ApiComponent = ComponentMap[selectedApi];
 
 	// Fetch data from API
 	async function fetchData() {
@@ -51,7 +56,7 @@ function App() {
 
 	// Reset API options
 	function resetOptions() {
-		const reset = confirm("Are you sure to reset all options?");
+		const reset = confirm('Are you sure to reset all options?');
 		if (reset === true) {
 			resetApi();
 		}
@@ -59,7 +64,7 @@ function App() {
 
 	// Reset records
 	function resetRecords() {
-		const reset = confirm("Are you sure to reset all records?");
+		const reset = confirm('Are you sure to reset all records?');
 		if (reset === true) {
 			setTotalRecords(0);
 			setRecords([]);
@@ -137,18 +142,23 @@ function App() {
 					<button onClick={downloadJson}>Download JSON</button>
 					<button onClick={resetOptions}>Reset Options</button>
 					<button onClick={resetRecords}>Reset Results</button>
-					{/* <button onClick={downloadXML}>Download XML</button> */}
 					{/* <button onClick={downloadCSV}>Download CSV</button> */}
 				</div>
 
-				{selectedApi === 'Skiddle' && (
+				<ApiComponent
+					setApiType={setApiType}
+					setApiSingleId={setApiSingleId}
+					setApiParams={setApiParams}
+					setResetApi={setResetApi}
+				/>
+				{/* {selectedApi === 'Skiddle' && (
 					<Skiddle
 						setApiType={setApiType}
 						setApiSingleId={setApiSingleId}
 						setApiParams={setApiParams}
 						setResetApi={setResetApi}
 					/>
-				)}
+				)} */}
 			</main>
 
 			{/* <div className='data-count'>
