@@ -300,7 +300,7 @@ export function Skiddle(props) {
 						id='individual-search-input'
 						disabled={!isIndivSearch}
 						value={indivId}
-						onChange={(e) => setIndivId(parseInt(e.target.value) || '')}
+						onChange={(e) => setIndivId(e.target.valueAsNumber || '')}
 					/>
 				</label>
 
@@ -368,8 +368,8 @@ export function Skiddle(props) {
 								disabled={!canGeoSearch}
 								value={latitude}
 								onChange={(e) => {
-									setLatitude(parseInt(e.target.value) || '');
-									addParam(e.target.name, parseInt(e.target.value) || '');
+									setLatitude(e.target.valueAsNumber || '');
+									addParam(e.target.name, e.target.valueAsNumber || '');
 								}}
 							/>
 						</label>
@@ -384,8 +384,8 @@ export function Skiddle(props) {
 								disabled={!canGeoSearch}
 								value={longitude}
 								onChange={(e) => {
-									setLongitude(parseInt(e.target.value) || '');
-									addParam(e.target.name, parseInt(e.target.value) || '');
+									setLongitude(e.target.valueAsNumber || '');
+									addParam(e.target.name, e.target.valueAsNumber || '');
 								}}
 							/>
 						</label>
@@ -420,8 +420,8 @@ export function Skiddle(props) {
 						disabled={!canGeoSearch}
 						value={radius}
 						onChange={(e) => {
-							setRadius(parseInt(e.target.value) || '');
-							addParam(e.target.name, parseInt(e.target.value) || '');
+							setRadius(e.target.valueAsNumber || '');
+							addParam(e.target.name, e.target.valueAsNumber || '');
 						}}
 					/>
 				</label>
@@ -470,8 +470,8 @@ export function Skiddle(props) {
 						disabled={idSearchType !== 'venue'}
 						value={venueId}
 						onChange={(e) => {
-							setVenueId(parseInt(e.target.value));
-							addParam(e.target.name, parseInt(e.target.value));
+							setVenueId(e.target.valueAsNumber);
+							addParam(e.target.name, e.target.valueAsNumber);
 						}}
 					/>
 				</div>
@@ -501,8 +501,8 @@ export function Skiddle(props) {
 						checked={idSearchType === 'brand'}
 						value={brandId}
 						onChange={(e) => {
-							setBrandId(parseInt(e.target.value));
-							addParam(e.target.name, parseInt(e.target.value));
+							setBrandId(e.target.valueAsNumber);
+							addParam(e.target.name, e.target.valueAsNumber);
 						}}
 					/>
 				</div>
@@ -530,8 +530,8 @@ export function Skiddle(props) {
 						checked={idSearchType === 'artist'}
 						value={artistId}
 						onChange={(e) => {
-							setArtistId(parseInt(e.target.value));
-							addParam(e.target.name, parseInt(e.target.value));
+							setArtistId(e.target.valueAsNumber);
+							addParam(e.target.name, e.target.valueAsNumber);
 						}}
 					/>
 				</div>
@@ -559,8 +559,8 @@ export function Skiddle(props) {
 						checked={idSearchType === 'genre'}
 						value={genreId}
 						onChange={(e) => {
-							setGenreId(parseInt(e.target.value));
-							addParam(e.target.name, parseInt(e.target.value));
+							setGenreId(e.target.valueAsNumber);
+							addParam(e.target.name, e.target.valueAsNumber);
 						}}
 					/>
 				</div>
@@ -679,8 +679,8 @@ export function Skiddle(props) {
 						max={100}
 						value={limit}
 						onChange={(e) => {
-							setLimit(parseInt(e.target.value) || '');
-							addParam(e.target.name, parseInt(e.target.value) || '');
+							setLimit(e.target.valueAsNumber || '');
+							addParam(e.target.name, e.target.valueAsNumber || '');
 						}}
 					/>
 				</label>
@@ -697,8 +697,8 @@ export function Skiddle(props) {
 						id='return-offset'
 						value={offset}
 						onChange={(e) => {
-							setOffset(parseInt(e.target.value) || '');
-							addParam(e.target.name, parseInt(e.target.value) || '');
+							setOffset(e.target.valueAsNumber || '');
+							addParam(e.target.name, e.target.valueAsNumber || '');
 						}}
 					/>
 				</label>
