@@ -13,7 +13,7 @@ async function fetchSkiddle(type, id, params) {
 		.then((response) => {
 			return {
 				totalHits: response.data.totalcount || 0,
-				records: response.data.results || {},
+				records: response.data.results || [],
 			};
 		})
 		.catch((error) => {
@@ -31,25 +31,28 @@ async function fetchSkiddle(type, id, params) {
 function fetchDataThistle() {}
 
 // Instance connect to BandsInTown API
-async function fetchBandsInTown(type, id, params) {
-	const baseUrl = import.meta.env.VITE_BANDSINTOWN_API_URL;
+async function fetchBandsInTown(endpoint, id, params) {
+	const url = import.meta.env.VITE_BANDSINTOWN_API_URL;
 	const app_id = import.meta.env.VITE_BANDSINTOWN_APP_ID;
 	const apiParams = {
 		app_id,
 		...params
 	}
-	let apiUrl = '';
 
-	if (type === 'artists') {
-		apiUrl = `${baseUrl}${type}/${id}/`;
-	} else {
-		apiUrl = `${baseUrl}artists/${id}/${type}/`;
-	}
-
-	return await axios.get(apiUrl, { params: apiParams })
+	return await axios.get(`${url}${endpoint}`, { params: apiParams })
 		.then((response) => {
-			console.log(response.data);
-			return response.data;
+			if (response.data === '') {
+				console.log('empty');
+				return {
+					totalHits: 0,
+					records: []
+				}
+			}
+
+			return {
+				totalHits: Array.isArray(response.data) ? response.data.length : 1,
+				records: Array.isArray(response.data) ? response.data : [response.data],
+			};
 		})
 		.catch((error) => {
 			let errorMsg = '';

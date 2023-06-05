@@ -92,7 +92,7 @@ const venueTypes = [
 ];
 
 export function Skiddle(props) {
-	const { setApiType, setApiSingleId, setApiParams, setResetApi } = props;
+	const { setApiEndpoint, setApiSingleId, setApiParams, setResetApi } = props;
 	const [params, setParams] = useState({});
 
 	const [searchType, setSearchType] = useState('events');
@@ -146,7 +146,7 @@ export function Skiddle(props) {
 		setParams({ ...newParams });
 	}
 
-	// Clear add inputs
+	// Clear all inputs
 	function clearInput() {
 		setIsIndivSearch(false);
 		setIncludeDescription(false);
@@ -231,9 +231,9 @@ export function Skiddle(props) {
 		setResetApi(() => clearInput);
 	}, []);
 
-	// Set search type, individual type ID & url for paramter
+	// Set search endpoint, individual type ID & url for paramter
 	useEffect(() => {
-		setApiType(searchType);
+		setApiEndpoint(searchType);
 		setApiSingleId(isIndivSearch ? indivId : null);
 		setApiParams(params);
 	}, [params, indivId]);
@@ -596,8 +596,8 @@ export function Skiddle(props) {
 							Min Date:
 							<input
 								type='date'
-								name='minDate'
-								id='minDate'
+								name='min-date'
+								id='min-date'
 								value={minDate}
 								onChange={(e) => {
 									setMinDate(e.target.value);
@@ -609,8 +609,8 @@ export function Skiddle(props) {
 							Max Date:
 							<input
 								type='date'
-								name='maxDate'
-								id='maxDate'
+								name='max-date'
+								id='max-date'
 								min={minDate}
 								value={maxDate}
 								onChange={(e) => {
@@ -708,7 +708,7 @@ export function Skiddle(props) {
 }
 
 Skiddle.propTypes = {
-	setApiType: PropTypes.func,
+	setApiEndpoint: PropTypes.func,
 	setApiSingleId: PropTypes.func,
 	setApiParams: PropTypes.func,
 	setResetApi: PropTypes.func,
