@@ -31,6 +31,35 @@ async function fetchSkiddle(type, id, params) {
 function fetchDataThistle() {}
 
 // Instance connect to BandsInTown API
-function fetchBandsInTown() {}
+async function fetchBandsInTown(type, id, params) {
+	const baseUrl = import.meta.env.VITE_BANDSINTOWN_API_URL;
+	const app_id = import.meta.env.VITE_BANDSINTOWN_APP_ID;
+	const apiParams = {
+		app_id,
+		...params
+	}
+	let apiUrl = '';
+
+	if (type === 'artists') {
+		apiUrl = `${baseUrl}${type}/${id}/`;
+	} else {
+		apiUrl = `${baseUrl}artists/${id}/${type}/`;
+	}
+
+	return await axios.get(apiUrl, { params: apiParams })
+		.then((response) => {
+			console.log(response.data);
+			return response.data;
+		})
+		.catch((error) => {
+			let errorMsg = '';
+			if (error.response) {
+				errorMsg = error.response.data.error;
+			} else {
+				errorMsg = error.message;
+			}
+			return { error: errorMsg};
+		})
+}
 
 export { fetchSkiddle, fetchDataThistle, fetchBandsInTown };

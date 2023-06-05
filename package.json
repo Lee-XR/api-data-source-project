@@ -1,5 +1,5 @@
 {
-  "name": "skiddle-api-data",
+  "name": "api-data-source-project",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,8 +10,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@json2csv/plainjs": "^7.0.1",
-    "@json2csv/transforms": "^7.0.1",
     "axios": "^1.4.0",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
