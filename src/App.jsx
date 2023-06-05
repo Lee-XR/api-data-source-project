@@ -1,14 +1,28 @@
 import { useEffect, useState } from 'react';
-import {
-	fetchBandsInTown,
-	fetchDataThistle,
-	fetchSkiddle,
-} from './fetchApi.js';
+import { fetchBandsInTown, fetchDataThistle, fetchSkiddle } from './fetchApi.js';
 
-import Header from './components/Header';
+import { Header } from './components/Header';
 import { Skiddle } from './components/Skiddle';
+import { DataThistle } from './components/DataThistle.jsx';
+import { BandsInTown } from './components/BandsInTown.jsx';
 
 import './App.css';
+
+// Individual API component and fetch data function
+const ComponentMap = {
+	Skiddle: {
+		component: Skiddle,
+		fetchFunc: fetchSkiddle
+	},
+	DataThistle: {
+		component: DataThistle,
+		fetchFunc: fetchDataThistle
+	},
+	BandsInTown: {
+		component: BandsInTown,
+		fetchFunc: fetchBandsInTown
+	}
+};
 
 function App() {
 	const [selectedApi, setSelectedApi] = useState('Skiddle');
@@ -24,6 +38,9 @@ function App() {
 	const [errorMsg, setErrorMsg] = useState('');
 	const [totalRecords, setTotalRecords] = useState(0);
 	const [records, setRecords] = useState([]);
+
+	// Return selected API component
+	const ApiComponent = ComponentMap[selectedApi].component;
 
 	// Fetch data from API
 	async function fetchData() {
@@ -51,7 +68,7 @@ function App() {
 
 	// Reset API options
 	function resetOptions() {
-		const reset = confirm("Are you sure to reset all options?");
+		const reset = confirm('Are you sure to reset all options?');
 		if (reset === true) {
 			resetApi();
 		}
@@ -59,7 +76,7 @@ function App() {
 
 	// Reset records
 	function resetRecords() {
-		const reset = confirm("Are you sure to reset all records?");
+		const reset = confirm('Are you sure to reset all records?');
 		if (reset === true) {
 			setTotalRecords(0);
 			setRecords([]);
@@ -83,20 +100,24 @@ function App() {
 		window.URL.revokeObjectURL(url);
 	}
 
-	// Set selected API axios method to fetch data
+	// Set selected API URL & axios method to fetch data
 	useEffect(() => {
-		if (selectedApi === 'Skiddle') {
-			setApiUrl(import.meta.env.VITE_SKIDDLE_API_URL);
-			setFetchApi(() => fetchSkiddle);
-		}
-		if (selectedApi === 'DataThistle') {
-			setApiUrl(import.meta.env.VITE_DATATHISTLE_API_URL);
-			setFetchApi(() => fetchDataThistle);
-		}
-		if (selectedApi === 'BandsInTown') {
-			setApiUrl(import.meta.env.VITE_BANDSINTOWN_API_URL);
-			setFetchApi(() => fetchBandsInTown);
-		}
+		const uppercaseName = selectedApi.toUpperCase();
+		setApiUrl(import.meta.env[`VITE_${uppercaseName}_API_URL`]);
+		setFetchApi(() => ComponentMap[selectedApi].fetchFunc);
+
+		// if (selectedApi === 'Skiddle') {
+		// 	setApiUrl(import.meta.env.VITE_SKIDDLE_API_URL);
+		// 	setFetchApi(() => fetchSkiddle);
+		// }
+		// if (selectedApi === 'DataThistle') {
+		// 	setApiUrl(import.meta.env.VITE_DATATHISTLE_API_URL);
+		// 	setFetchApi(() => fetchDataThistle);
+		// }
+		// if (selectedApi === 'BandsInTown') {
+		// 	setApiUrl(import.meta.env.VITE_BANDSINTOWN_API_URL);
+		// 	setFetchApi(() => fetchBandsInTown);
+		// }
 	}, [selectedApi]);
 
 	// Reset fetched records & total records count
@@ -107,9 +128,11 @@ function App() {
 
 	return (
 		<>
+			{/* Header with API selection */}
 			<Header setSelectedApi={setSelectedApi} />
 
 			<main>
+				{/* API name, URL & search parameters */}
 				<h2>{selectedApi} API</h2>
 				<p>
 					<b>
@@ -120,6 +143,7 @@ function App() {
 					</b>
 				</p>
 
+				{/* Fetching, error & total results message */}
 				<p>
 					{isFetching && !isError && <span>Fetching...</span>}
 					{!isFetching && !isError && (
@@ -137,18 +161,16 @@ function App() {
 					<button onClick={downloadJson}>Download JSON</button>
 					<button onClick={resetOptions}>Reset Options</button>
 					<button onClick={resetRecords}>Reset Results</button>
-					{/* <button onClick={downloadXML}>Download XML</button> */}
 					{/* <button onClick={downloadCSV}>Download CSV</button> */}
 				</div>
 
-				{selectedApi === 'Skiddle' && (
-					<Skiddle
-						setApiType={setApiType}
-						setApiSingleId={setApiSingleId}
-						setApiParams={setApiParams}
-						setResetApi={setResetApi}
-					/>
-				)}
+				{/* Display selected API options */}
+				<ApiComponent
+					setApiType={setApiType}
+					setApiSingleId={setApiSingleId}
+					setApiParams={setApiParams}
+					setResetApi={setResetApi}
+				/>
 			</main>
 
 			{/* <div className='data-count'>
