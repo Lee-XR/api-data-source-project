@@ -27,7 +27,7 @@ const ComponentMap = {
 function App() {
 	const [selectedApi, setSelectedApi] = useState('Skiddle');
 	const [apiUrl, setApiUrl] = useState('');
-	const [apiType, setApiType] = useState('');
+	const [apiEndpoint, setApiEndpoint] = useState('');
 	const [apiSingleId, setApiSingleId] = useState(null);
 	const [apiParams, setApiParams] = useState('');
 	const [fetchApi, setFetchApi] = useState(null);
@@ -46,7 +46,7 @@ function App() {
 	async function fetchData() {
 		setIsFetching(true);
 		setIsError(false);
-		await fetchApi(apiType, apiSingleId, apiParams)
+		await fetchApi(apiEndpoint, apiSingleId, apiParams)
 			.then((response) => {
 				if (response.error) {
 					setIsError(true);
@@ -94,7 +94,7 @@ function App() {
 		const link = document.createElement('a');
 		link.style.display = 'none';
 		link.href = url;
-		link.download = `${selectedApi}-${apiType}.json`;
+		link.download = `${selectedApi}-${apiEndpoint}.json`;
 		document.body.appendChild(link);
 		link.click();
 		window.URL.revokeObjectURL(url);
@@ -124,7 +124,7 @@ function App() {
 	useEffect(() => {
 		setTotalRecords(0);
 		setRecords([]);
-	}, [apiUrl, apiType]);
+	}, [apiUrl, apiEndpoint]);
 
 	return (
 		<>
@@ -137,7 +137,7 @@ function App() {
 				<p>
 					<b>
 						{apiUrl}
-						{apiType}
+						{apiEndpoint}
 						{apiSingleId ? `/${apiSingleId}` : ''}
 						/?{new URLSearchParams(apiParams).toString()}
 					</b>
@@ -166,7 +166,7 @@ function App() {
 
 				{/* Display selected API options */}
 				<ApiComponent
-					setApiType={setApiType}
+					setApiEndpoint={setApiEndpoint}
 					setApiSingleId={setApiSingleId}
 					setApiParams={setApiParams}
 					setResetApi={setResetApi}
