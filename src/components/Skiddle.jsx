@@ -3,93 +3,11 @@ import PropTypes from 'prop-types';
 
 import { OptionsSection } from './OptionsSection';
 
+import eventTypes from '../assets/json/Skiddle Event Types.json';
+import venueTypes from '../assets/json/Skiddle Venue Types.json';
+import genres from '../assets/json/Skiddle All Genres.json';
+import brands from '../assets/json/Skiddle All Brands.json';
 import '../styles/api.css';
-
-/*
-	EVENT & VENUE types code & type name
-	~ EVENT code must all be UPPERCASE
-	~ VENUE code must all be lowercase
- */
-const eventTypes = [
-	{
-		code: 'FEST',
-		type: 'Festivals',
-	},
-	{
-		code: 'LIVE',
-		type: 'Live Music',
-	},
-	{
-		code: 'CLUB',
-		type: 'Clubbing / Dance Music',
-	},
-	{
-		code: 'DATE',
-		type: 'Dating Event',
-	},
-	{
-		code: 'THEATRE',
-		type: 'Theatre / Dance',
-	},
-	{
-		code: 'COMEDY',
-		type: 'Comedy',
-	},
-	{
-		code: 'EXHIB',
-		type: 'Exhibitions and Attractions',
-	},
-	{
-		code: 'KIDS',
-		type: 'Kids / Family Event',
-	},
-	{
-		code: 'BARPUB',
-		type: 'Bar / Pub Event',
-	},
-	{
-		code: 'LGB',
-		type: 'Gay / Lesbian Event',
-	},
-	{
-		code: 'SPORT',
-		type: 'Sporting Event',
-	},
-	{
-		code: 'ARTS',
-		type: 'The Arts',
-	},
-];
-const venueTypes = [
-	{
-		code: 'b',
-		type: 'Bar / Pub',
-	},
-	{
-		code: 'n',
-		type: 'Nightclub',
-	},
-	{
-		code: 'l',
-		type: 'Live Music',
-	},
-	{
-		code: 'o',
-		type: 'Outdoor Venue',
-	},
-	{
-		code: 't',
-		type: 'Theatre',
-	},
-	{
-		code: 's',
-		type: 'Sports Ground',
-	},
-	{
-		code: 'g',
-		type: 'Gallery',
-	},
-];
 
 export function Skiddle(props) {
 	const { setApiEndpoint, setApiSingleId, setApiParams, setResetApi } = props;
@@ -282,7 +200,10 @@ export function Skiddle(props) {
 				</div>
 
 				{/* Checkbox select individual record ID search */}
-				<label htmlFor='individual-search-checkbox' className={!canIndivSearch && 'disabled'}>
+				<label
+					htmlFor='individual-search-checkbox'
+					className={!canIndivSearch && 'disabled'}
+				>
 					<span className='option-title'>Individual Search</span>
 					<input
 						type='checkbox'
@@ -496,18 +417,31 @@ export function Skiddle(props) {
 						/>
 						Brand ID:
 					</label>
-					<input
-						type='number'
+					<select
 						name='b'
-						id='brand-id-input'
+						id='brand-id-select'
 						disabled={idSearchType !== 'brand'}
-						checked={idSearchType === 'brand'}
 						value={brandId}
 						onChange={(e) => {
-							setBrandId(e.target.valueAsNumber);
-							addParam(e.target.name, e.target.valueAsNumber);
+							setBrandId(e.target.value);
+							addParam(e.target.name, e.target.value);
 						}}
-					/>
+					>
+						<option
+							value=''
+							disabled
+						>
+							Select a brand
+						</option>
+						{brands.map((brand) => (
+							<option
+								key={brand.id}
+								value={brand.id}
+							>
+								{brand.name} (ID: {brand.id})
+							</option>
+						))}
+					</select>
 				</div>
 				<div
 					className={
@@ -554,18 +488,26 @@ export function Skiddle(props) {
 						/>
 						Genre ID:
 					</label>
-					<input
-						type='number'
-						name='g'
-						id='genre-id-input'
+					<select 
+						name="g" 
+						id="genre-id-select"
 						disabled={idSearchType !== 'genre'}
-						checked={idSearchType === 'genre'}
 						value={genreId}
 						onChange={(e) => {
-							setGenreId(e.target.valueAsNumber);
-							addParam(e.target.name, e.target.valueAsNumber);
+							setGenreId(e.target.value);
+							addParam(e.target.name, e.target.value);
 						}}
-					/>
+					>
+						<option value="" disabled>Select a genre</option>
+						{genres.map((genre) => (
+							<option
+								key={genre.id}
+								value={genre.id}
+							>
+								{genre.name} (ID: {genre.id})
+							</option>
+						))}
+					</select>
 				</div>
 			</OptionsSection>
 

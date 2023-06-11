@@ -1,0 +1,50 @@
+[
+    {
+        "code": "FEST",
+        "type": "Festivals"
+    },
+    {
+		"code": "LIVE",
+		"type": "Live Music"
+	},
+    {
+		"code": "CLUB",
+		"type": "Clubbing / Dance Music"
+	},
+	{
+		"code": "DATE",
+		"type": "Dating Event"
+	},
+	{
+		"code": "THEATRE",
+		"type": "Theatre / Dance"
+	},
+	{
+		"code": "COMEDY",
+		"type": "Comedy"
+	},
+	{
+		"code": "EXHIB",
+		"type": "Exhibitions and Attractions"
+	},
+	{
+		"code": "KIDS",
+		"type": "Kids / Family Event"
+	},
+	{
+		"code": "BARPUB",
+		"type": "Bar / Pub Event"
+	},
+	{
+		"code": "LGB",
+		"type": "Gay / Lesbian Event"
+	},
+	{
+		"code": "SPORT",
+		"type": "Sporting Event"
+	},
+	{
+		"code": "ARTS",
+		"type": "The Arts"
+	}
+]

@@ -1,0 +1,30 @@
+[
+	{
+		"code": "b",
+		"type": "Bar / Pub"
+	},
+	{
+		"code": "n",
+		"type": "Nightclub"
+	},
+	{
+		"code": "l",
+		"type": "Live Music"
+	},
+	{
+		"code": "o",
+		"type": "Outdoor Venue"
+	},
+	{
+		"code": "t",
+		"type": "Theatre"
+	},
+	{
+		"code": "s",
+		"type": "Sports Ground"
+	},
+	{
+		"code": "g",
+		"type": "Gallery"
+	}
+]
