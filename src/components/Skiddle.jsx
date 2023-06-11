@@ -96,6 +96,7 @@ export function Skiddle(props) {
 	const [params, setParams] = useState({});
 
 	const [searchType, setSearchType] = useState('events');
+	const [canIndivSearch, setCanIndivSearch] = useState(false);
 	const [isIndivSearch, setIsIndivSearch] = useState(false);
 	const [indivId, setIndivId] = useState('');
 	const [includeDescription, setIncludeDescription] = useState(false);
@@ -188,8 +189,9 @@ export function Skiddle(props) {
 
 	// Change search type option and input settings
 	function changeType(type) {
-		setApiType(type);
+		setApiEndpoint(type);
 		setSearchType(type);
+		setCanIndivSearch(type === 'events');
 		setCanGeoSearch(type === 'events' || type === 'venues');
 		setCanKeywordSearch(type === 'events' || type === 'artists');
 		setCanTypeSearch(type === 'events' || type === 'venues');
@@ -280,12 +282,13 @@ export function Skiddle(props) {
 				</div>
 
 				{/* Checkbox select individual record ID search */}
-				<label htmlFor='individual-search-checkbox'>
+				<label htmlFor='individual-search-checkbox' className={!canIndivSearch && 'disabled'}>
 					<span className='option-title'>Individual Search</span>
 					<input
 						type='checkbox'
 						name='individual-search-checkbox'
 						className='search-checkbox'
+						disabled={!canIndivSearch}
 						checked={isIndivSearch}
 						onChange={() => toggleIndivSearch()}
 					/>
