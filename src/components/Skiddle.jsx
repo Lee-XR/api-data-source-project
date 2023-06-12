@@ -216,7 +216,7 @@ export function Skiddle(props) {
 				</label>
 				<label
 					htmlFor='individual-search-input'
-					className='search-input'
+					className={!isIndivSearch ? 'search-input disabled' : 'search-input'}
 				>
 					ID:
 					<input
