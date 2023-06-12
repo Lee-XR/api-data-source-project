@@ -14,7 +14,7 @@ export function Skiddle(props) {
 	const [params, setParams] = useState({});
 
 	const [searchType, setSearchType] = useState('events');
-	const [canIndivSearch, setCanIndivSearch] = useState(false);
+	const [canIndivSearch, setCanIndivSearch] = useState(true);
 	const [isIndivSearch, setIsIndivSearch] = useState(false);
 	const [indivId, setIndivId] = useState('');
 	const [includeDescription, setIncludeDescription] = useState(false);
