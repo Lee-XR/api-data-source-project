@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
-import { fetchBandsInTown, fetchDataThistle, fetchSkiddle } from './fetchApi.js';
+import { fetchSkiddle } from './api/fetchSkiddleApi.js';
+import { fetchDataThistle } from './api/fetchDataThistleApi.js';
+import { fetchBandsInTown } from './api/fetchBandsInTownApi.js';
 
 import { Header } from './components/Header';
 import { Skiddle } from './components/Skiddle';

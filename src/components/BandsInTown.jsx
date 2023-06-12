@@ -1,22 +1,11 @@
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { getCurrentDate } from '../utils/dateUtils.js';
+import { replaceWhiteSpace } from '../utils/stringUtils.js';
 
 import { OptionsSection } from './OptionsSection';
 
-import '../styles/api.css';
-
-// Return current date (yyyy-mm-dd)
-function getCurrentDate() {
-	let todayDate = new Date();
-	const timezoneOffset = todayDate.getTimezoneOffset();
-	todayDate = new Date(todayDate.getTime() - timezoneOffset * 60 * 1000);
-	return todayDate.toISOString().split('T')[0];
-}
-
-// Return text with white space as %20
-function replaceWhiteSpace(text) {
-    return text.replace(/\s/g, '%20');
-}
+import '../styles/apiOptions.css';
 
 export function BandsInTown(props) {
 	const { setApiEndpoint, setApiParams, setResetApi } = props;

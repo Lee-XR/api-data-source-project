@@ -7,7 +7,7 @@ import eventTypes from '../assets/json/Skiddle Event Types.json';
 import venueTypes from '../assets/json/Skiddle Venue Types.json';
 import genres from '../assets/json/Skiddle All Genres.json';
 import brands from '../assets/json/Skiddle All Brands.json';
-import '../styles/api.css';
+import '../styles/apiOptions.css';
 
 export function Skiddle(props) {
 	const { setApiEndpoint, setApiSingleId, setApiParams, setResetApi } = props;

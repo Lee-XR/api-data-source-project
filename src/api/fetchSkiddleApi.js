@@ -62,7 +62,7 @@ async function multiFetchSkiddle(totalCount, firstLimit, recOffset, data) {
 }
 
 // Fetch data from Skiddle PHP SDK API
-async function fetchSkiddle(type, id, params) {
+export async function fetchSkiddle(type, id, params) {
 	const firstLimit = params.limit || 20;
 	let recOffset = params.offset || 0;
 	let totalCount = 0;
@@ -102,44 +102,3 @@ async function fetchSkiddle(type, id, params) {
 		}
 	);
 }
-
-// Fetch data from DataThistle API
-function fetchDataThistle() {}
-
-// Fetch data from BandsInTown API
-async function fetchBandsInTown(endpoint, id, params) {
-	const url = import.meta.env.VITE_BANDSINTOWN_API_URL;
-	const app_id = import.meta.env.VITE_BANDSINTOWN_APP_ID;
-	const apiParams = {
-		app_id,
-		...params,
-	};
-
-	return await axios
-		.get(`${url}${endpoint}`, { params: apiParams })
-		.then((response) => {
-			if (response.data === '') {
-				console.log('empty');
-				return {
-					totalHits: 0,
-					records: [],
-				};
-			}
-
-			return {
-				totalHits: Array.isArray(response.data) ? response.data.length : 1,
-				records: Array.isArray(response.data) ? response.data : [response.data],
-			};
-		})
-		.catch((error) => {
-			let errorMsg = '';
-			if (error.response) {
-				errorMsg = error.response.data.error;
-			} else {
-				errorMsg = error.message;
-			}
-			return { error: errorMsg };
-		});
-}
-
-export { fetchSkiddle, fetchDataThistle, fetchBandsInTown };
