@@ -98,7 +98,7 @@ async function fetchSkiddle(type, id, params) {
 			};
 		},
 		(error) => {
-			throw new Error(error.messages);
+			throw new Error(error.message);
 		}
 	);
 }
