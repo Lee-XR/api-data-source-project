@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 
-import '../styles/api.css';
+import '../styles/apiOptions.css';
 
 export function OptionsSection(props) {
 	const { children, isDisabled } = props;

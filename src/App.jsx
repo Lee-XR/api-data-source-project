@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
-import { fetchBandsInTown, fetchDataThistle, fetchSkiddle } from './fetchApi.js';
+import { fetchSkiddle } from './api/fetchSkiddleApi.js';
+import { fetchDataThistle } from './api/fetchDataThistleApi.js';
+import { fetchBandsInTown } from './api/fetchBandsInTownApi.js';
 
 import { Header } from './components/Header';
 import { Skiddle } from './components/Skiddle';
@@ -48,21 +50,15 @@ function App() {
 		setIsError(false);
 		await fetchApi(apiEndpoint, apiSingleId, apiParams)
 			.then((response) => {
-				if (response.error) {
-					setIsError(true);
-					setErrorMsg(response.error);
-				} else {
-					setTotalRecords(parseInt(response.totalHits));
-					setRecords([...records, ...response.records]);
-				}
+				setTotalRecords(parseInt(response.totalHits));
+				setRecords([...records, ...response.records]);
 				setIsFetching(false);
 			})
 			.catch((err) => {
 				setIsFetching(false);
 				setIsError(true);
-				setErrorMsg(err);
-				console.log(err);
-				console.error(err);
+				setErrorMsg(err.message);
+				console.error(err.message);
 			});
 	}
 
@@ -105,19 +101,6 @@ function App() {
 		const uppercaseName = selectedApi.toUpperCase();
 		setApiUrl(import.meta.env[`VITE_${uppercaseName}_API_URL`]);
 		setFetchApi(() => ComponentMap[selectedApi].fetchFunc);
-
-		// if (selectedApi === 'Skiddle') {
-		// 	setApiUrl(import.meta.env.VITE_SKIDDLE_API_URL);
-		// 	setFetchApi(() => fetchSkiddle);
-		// }
-		// if (selectedApi === 'DataThistle') {
-		// 	setApiUrl(import.meta.env.VITE_DATATHISTLE_API_URL);
-		// 	setFetchApi(() => fetchDataThistle);
-		// }
-		// if (selectedApi === 'BandsInTown') {
-		// 	setApiUrl(import.meta.env.VITE_BANDSINTOWN_API_URL);
-		// 	setFetchApi(() => fetchBandsInTown);
-		// }
 	}, [selectedApi]);
 
 	// Reset fetched records & total records count
@@ -152,7 +135,7 @@ function App() {
 						</span>
 					)}
 					{!isFetching && isError && (
-						<span style={{ color: 'red' }}>{errorMsg}</span>
+						<span className='error-msg'>{errorMsg}</span>
 					)}
 				</p>
 
@@ -161,7 +144,6 @@ function App() {
 					<button onClick={downloadJson}>Download JSON</button>
 					<button onClick={resetOptions}>Reset Options</button>
 					<button onClick={resetRecords}>Reset Results</button>
-					{/* <button onClick={downloadCSV}>Download CSV</button> */}
 				</div>
 
 				{/* Display selected API options */}
@@ -172,28 +154,6 @@ function App() {
 					setResetApi={setResetApi}
 				/>
 			</main>
-
-			{/* <div className='data-count'>
-				{currentOffset} of {totalCount} result(s)
-			</div> */}
-
-			{/* <div className='fields'>
-				{data.length > 0 && data.map((record, index) => (
-					<div key={record.id} className='field'>
-						<span>{index + 1}</span>
-						<span>{record.eventname}</span>
-					</div>
-				))}
-				{Array.from(fieldset.keys()).map((key, index) => (
-					<div
-						key={key}
-						className='field'
-					>
-						<span>{index + 1}</span>
-						<span>{key}</span>
-					</div>
-				))} 
-			</div> */}
 		</>
 	);
 }

@@ -1,0 +1,402 @@
+[
+  {
+    "id": "1",
+    "name": "House"
+  },
+  {
+    "id": "2",
+    "name": "Trance"
+  },
+  {
+    "id": "3",
+    "name": "UK Garage"
+  },
+  {
+    "id": "4",
+    "name": "R&B"
+  },
+  {
+    "id": "5",
+    "name": "Rock"
+  },
+  {
+    "id": "7",
+    "name": "Breaks"
+  },
+  {
+    "id": "8",
+    "name": "Drum n Bass"
+  },
+  {
+    "id": "9",
+    "name": "Techno"
+  },
+  {
+    "id": "10",
+    "name": "Deep House"
+  },
+  {
+    "id": "12",
+    "name": "Retro House"
+  },
+  {
+    "id": "13",
+    "name": "Tribal House"
+  },
+  {
+    "id": "14",
+    "name": "Tech House"
+  },
+  {
+    "id": "15",
+    "name": "Acid House"
+  },
+  {
+    "id": "16",
+    "name": "Hard House"
+  },
+  {
+    "id": "17",
+    "name": "Psy/GoaTrance"
+  },
+  {
+    "id": "18",
+    "name": "Hardcore/Hardstyle"
+  },
+  {
+    "id": "19",
+    "name": "Old Skool"
+  },
+  {
+    "id": "20",
+    "name": "Pop"
+  },
+  {
+    "id": "21",
+    "name": "Club Classics"
+  },
+  {
+    "id": "22",
+    "name": "Funky House"
+  },
+  {
+    "id": "23",
+    "name": "Prog House"
+  },
+  {
+    "id": "24",
+    "name": "Dancehall"
+  },
+  {
+    "id": "25",
+    "name": "Jazz"
+  },
+  {
+    "id": "26",
+    "name": "Indie"
+  },
+  {
+    "id": "27",
+    "name": "Metal"
+  },
+  {
+    "id": "28",
+    "name": "Hard Trance"
+  },
+  {
+    "id": "29",
+    "name": "Electro House"
+  },
+  {
+    "id": "30",
+    "name": "Cheesy Dance"
+  },
+  {
+    "id": "35",
+    "name": "Themed"
+  },
+  {
+    "id": "36",
+    "name": "Rap"
+  },
+  {
+    "id": "37",
+    "name": "Classical"
+  },
+  {
+    "id": "39",
+    "name": "Hip Hop"
+  },
+  {
+    "id": "40",
+    "name": "Blues"
+  },
+  {
+    "id": "41",
+    "name": "Ska"
+  },
+  {
+    "id": "42",
+    "name": "Acoustic"
+  },
+  {
+    "id": "43",
+    "name": "Soul"
+  },
+  {
+    "id": "44",
+    "name": "Folk"
+  },
+  {
+    "id": "45",
+    "name": "Funk"
+  },
+  {
+    "id": "46",
+    "name": "Alternative"
+  },
+  {
+    "id": "48",
+    "name": "Covers Band/Tribute Act"
+  },
+  {
+    "id": "49",
+    "name": "Salsa"
+  },
+  {
+    "id": "50",
+    "name": "Latin"
+  },
+  {
+    "id": "51",
+    "name": "Choral"
+  },
+  {
+    "id": "53",
+    "name": "Punk"
+  },
+  {
+    "id": "56",
+    "name": "Minimal Techno"
+  },
+  {
+    "id": "57",
+    "name": "Disco"
+  },
+  {
+    "id": "58",
+    "name": "Swing"
+  },
+  {
+    "id": "59",
+    "name": "Big Band"
+  },
+  {
+    "id": "60",
+    "name": "Rock & Roll"
+  },
+  {
+    "id": "61",
+    "name": "Electronic"
+  },
+  {
+    "id": "62",
+    "name": "80s"
+  },
+  {
+    "id": "63",
+    "name": "60s"
+  },
+  {
+    "id": "64",
+    "name": "70s"
+  },
+  {
+    "id": "65",
+    "name": "Dubstep"
+  },
+  {
+    "id": "66",
+    "name": "African"
+  },
+  {
+    "id": "67",
+    "name": "World Music"
+  },
+  {
+    "id": "68",
+    "name": "Reggae"
+  },
+  {
+    "id": "69",
+    "name": "Bassline"
+  },
+  {
+    "id": "70",
+    "name": "Grime"
+  },
+  {
+    "id": "71",
+    "name": "Country/Americana"
+  },
+  {
+    "id": "72",
+    "name": "Nu Rave"
+  },
+  {
+    "id": "73",
+    "name": "Opera"
+  },
+  {
+    "id": "74",
+    "name": "Spoken Word"
+  },
+  {
+    "id": "75",
+    "name": "Burlesque"
+  },
+  {
+    "id": "76",
+    "name": "Retro"
+  },
+  {
+    "id": "78",
+    "name": "Bass Music"
+  },
+  {
+    "id": "79",
+    "name": "EDM"
+  },
+  {
+    "id": "80",
+    "name": "Jungle"
+  },
+  {
+    "id": "81",
+    "name": "Hard Dance"
+  },
+  {
+    "id": "82",
+    "name": "90s"
+  },
+  {
+    "id": "83",
+    "name": "00s"
+  },
+  {
+    "id": "84",
+    "name": "Grunge"
+  },
+  {
+    "id": "85",
+    "name": "Nu Metal"
+  },
+  {
+    "id": "86",
+    "name": "Nu Indie"
+  },
+  {
+    "id": "87",
+    "name": "Nu Disco"
+  },
+  {
+    "id": "88",
+    "name": "Emo"
+  },
+  {
+    "id": "89",
+    "name": "Post Rock"
+  },
+  {
+    "id": "91",
+    "name": "Experimental"
+  },
+  {
+    "id": "92",
+    "name": "Bollywood"
+  },
+  {
+    "id": "93",
+    "name": "Brit Pop"
+  },
+  {
+    "id": "94",
+    "name": "Big Beat"
+  },
+  {
+    "id": "95",
+    "name": "Afrobeat"
+  },
+  {
+    "id": "96",
+    "name": "New Wave"
+  },
+  {
+    "id": "97",
+    "name": "Synth Pop"
+  },
+  {
+    "id": "98",
+    "name": "Indie Pop"
+  },
+  {
+    "id": "99",
+    "name": "Hardcore Punk"
+  },
+  {
+    "id": "100",
+    "name": "Orchestral"
+  },
+  {
+    "id": "101",
+    "name": "Trap"
+  },
+  {
+    "id": "102",
+    "name": "Disco House"
+  },
+  {
+    "id": "103",
+    "name": "Dub"
+  },
+  {
+    "id": "105",
+    "name": "Electro Swing"
+  },
+  {
+    "id": "107",
+    "name": "Pop Rock"
+  },
+  {
+    "id": "108",
+    "name": "Soulful House"
+  },
+  {
+    "id": "109",
+    "name": "Electro Hip Hop"
+  },
+  {
+    "id": "110",
+    "name": "Amapiano"
+  },
+  {
+    "id": "111",
+    "name": "Minimal"
+  },
+  {
+    "id": "112",
+    "name": "Electro"
+  },
+  {
+    "id": "113",
+    "name": "Pop Punk"
+  },
+  {
+    "id": "114",
+    "name": "Bounce"
+  },
+  {
+    "id": "115",
+    "name": "K-Pop"
+  }
+]
