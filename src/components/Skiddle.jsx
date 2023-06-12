@@ -202,7 +202,7 @@ export function Skiddle(props) {
 				{/* Checkbox select individual record ID search */}
 				<label
 					htmlFor='individual-search-checkbox'
-					className={!canIndivSearch && 'disabled'}
+					className={!canIndivSearch ? 'disabled' : ''}
 				>
 					<span className='option-title'>Individual Search</span>
 					<input
@@ -472,7 +472,7 @@ export function Skiddle(props) {
 						}}
 					/>
 				</div>
-				<div
+				<div	
 					className={
 						searchType === 'events' ? 'search-input' : 'search-input disabled'
 					}
