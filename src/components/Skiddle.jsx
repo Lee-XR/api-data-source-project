@@ -541,7 +541,7 @@ export function Skiddle(props) {
 							Min Date:
 							<input
 								type='date'
-								name='min-date'
+								name='minDate'
 								id='min-date'
 								value={minDate}
 								onChange={(e) => {
@@ -554,7 +554,7 @@ export function Skiddle(props) {
 							Max Date:
 							<input
 								type='date'
-								name='max-date'
+								name='maxDate'
 								id='max-date'
 								min={minDate}
 								value={maxDate}
