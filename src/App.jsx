@@ -7,6 +7,7 @@ import { Header } from './components/Header';
 import { Skiddle } from './components/Skiddle';
 import { DataThistle } from './components/DataThistle.jsx';
 import { BandsInTown } from './components/BandsInTown.jsx';
+import { Spinner } from './components/Spinner.jsx';
 
 import './App.css';
 
@@ -14,16 +15,16 @@ import './App.css';
 const ComponentMap = {
 	Skiddle: {
 		component: Skiddle,
-		fetchFunc: fetchSkiddle
+		fetchFunc: fetchSkiddle,
 	},
 	DataThistle: {
 		component: DataThistle,
-		fetchFunc: fetchDataThistle
+		fetchFunc: fetchDataThistle,
 	},
 	BandsInTown: {
 		component: BandsInTown,
-		fetchFunc: fetchBandsInTown
-	}
+		fetchFunc: fetchBandsInTown,
+	},
 };
 
 function App() {
@@ -127,8 +128,13 @@ function App() {
 				</p>
 
 				{/* Fetching, error & total results message */}
-				<p>
-					{isFetching && !isError && <span>Fetching...</span>}
+				<div className='msg-box'>
+					{isFetching && !isError && (
+						<>
+							<span>Fetching...</span>
+							<Spinner />
+						</>
+					)}
 					{!isFetching && !isError && (
 						<span>
 							Returned <b>{records.length}</b> of <b>{totalRecords}</b> results
@@ -137,13 +143,33 @@ function App() {
 					{!isFetching && isError && (
 						<span className='error-msg'>{errorMsg}</span>
 					)}
-				</p>
+				</div>
 
 				<div className='btns'>
-					<button onClick={fetchData}>Fetch Data</button>
-					<button onClick={downloadJson}>Download JSON</button>
-					<button onClick={resetOptions}>Reset Options</button>
-					<button onClick={resetRecords}>Reset Results</button>
+					<button
+						onClick={fetchData}
+						disabled={isFetching}
+					>
+						Fetch Data
+					</button>
+					<button
+						onClick={downloadJson}
+						disabled={isFetching}
+					>
+						Download JSON
+					</button>
+					<button
+						onClick={resetOptions}
+						disabled={isFetching}
+					>
+						Reset Options
+					</button>
+					<button
+						onClick={resetRecords}
+						disabled={isFetching}
+					>
+						Reset Results
+					</button>
 				</div>
 
 				{/* Display selected API options */}
