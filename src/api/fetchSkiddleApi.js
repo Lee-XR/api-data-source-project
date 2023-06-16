@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Single fetch promise for Skiddle API
-export async function singleFetchSkiddle(type, id, params) {
+export async function fetchSkiddle(type, id, params) {
 
 	return await axios
 		.post('api/skiddle', {type, id, params})

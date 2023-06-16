@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { singleFetchSkiddle } from './api/fetchSkiddleApi.js';
+import { fetchSkiddle } from './api/fetchSkiddleApi.js';
 import { fetchDataThistle } from './api/fetchDataThistleApi.js';
 import { fetchBandsInTown } from './api/fetchBandsInTownApi.js';
 
@@ -15,7 +15,7 @@ import './App.css';
 const ComponentMap = {
 	Skiddle: {
 		component: Skiddle,
-		fetchFunc: singleFetchSkiddle,
+		fetchFunc: fetchSkiddle,
 	},
 	DataThistle: {
 		component: DataThistle,
