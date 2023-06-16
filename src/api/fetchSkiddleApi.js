@@ -1,15 +1,8 @@
 import axios from 'axios';
 
-const instance = axios.create({
-	baseURL:
-		import.meta.env.MODE === 'production'
-			? import.meta.env.VITE_BACKEND_BASE_URL_PROD
-			: import.meta.env.VITE_BACKEND_BASE_URL_DEV,
-});
-
 // Single fetch promise for Skiddle API
 export async function fetchSkiddle(type, id, params) {
-	return await instance
+	return await axios
 		.post('api/skiddle', { type, id, params })
 		.then((response) => {
 			return response.data;
