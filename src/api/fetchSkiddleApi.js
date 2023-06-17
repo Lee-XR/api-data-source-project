@@ -3,7 +3,7 @@ import { skiddleInstance } from '../configs/axiosConfig';
 // Single fetching
 async function singleFetch(data) {
 
-	return await skiddleInstance.post('/', data).then((response) => {
+	return await skiddleInstance.post('api/skiddle', data).then((response) => {
 		const isArray = Array.isArray(response.data.results);
 
 		return {
