@@ -1,10 +1,6 @@
 import axios from 'axios';
 
 export const skiddleInstance = axios.create({
-	// baseURL:
-	// 	import.meta.env.MODE === 'production'
-	// 		? import.meta.env.VITE_SKIDDLE_SDK_URL_PROD
-	// 		: import.meta.env.VITE_SKIDDLE_SDK_URL_DEV,
     baseURL: 
         import.meta.env.MODE === 'production'
             ? import.meta.env.VITE_BACKEND_BASE_URL_PROD
