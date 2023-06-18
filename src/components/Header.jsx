@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import '../App.css';
+import '../styles/header.css';
 
 const apiArray = ['Skiddle', 'DataThistle', 'BandsInTown'];
 

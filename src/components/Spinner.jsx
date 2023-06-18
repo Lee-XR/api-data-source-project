@@ -1,4 +1,4 @@
-import '../App.css';
+import '../styles/animations.css';
 
 export function Spinner() {
     return (
