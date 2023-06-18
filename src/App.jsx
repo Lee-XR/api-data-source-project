@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { fetchSkiddle } from './api/fetchSkiddleApi.js';
 import { fetchDataThistle } from './api/fetchDataThistleApi.js';
 import { fetchBandsInTown } from './api/fetchBandsInTownApi.js';
+import { RecordsContext } from './contexts/RecordsContext.jsx';
 
 import { Header } from './components/Header';
 import { Skiddle } from './components/Skiddle';
@@ -39,8 +40,8 @@ function App() {
 	const [isFetching, setIsFetching] = useState(false);
 	const [isError, setIsError] = useState(false);
 	const [errorMsg, setErrorMsg] = useState('');
-	const [totalRecords, setTotalRecords] = useState(0);
-	const [records, setRecords] = useState([]);
+
+	const { records, setRecords, totalRecordCount, setTotalRecordCount } = useContext(RecordsContext);
 
 	// Return selected API component
 	const ApiComponent = ComponentMap[selectedApi].component;
@@ -50,9 +51,9 @@ function App() {
 		setIsFetching(true);
 		setIsError(false);
 		await fetchApi(apiEndpoint, apiSingleId, apiParams)
-			.then((response) => {
-				setTotalRecords(parseInt(response.totalHits));
-				setRecords([...records, ...response.records]);
+			.then(({ totalHits, totalRecords }) => {
+				setTotalRecordCount(parseInt(totalHits));
+				setRecords([...records, ...totalRecords]);
 				setIsFetching(false);
 			})
 			.catch((err) => {
@@ -75,7 +76,7 @@ function App() {
 	function resetRecords() {
 		const reset = confirm('Are you sure to reset all records?');
 		if (reset === true) {
-			setTotalRecords(0);
+			setTotalRecordCount(0);
 			setRecords([]);
 			setIsFetching(false);
 			setIsError(false);
@@ -106,7 +107,7 @@ function App() {
 
 	// Reset fetched records & total records count
 	useEffect(() => {
-		setTotalRecords(0);
+		setTotalRecordCount(0);
 		setRecords([]);
 	}, [apiUrl, apiEndpoint]);
 
@@ -137,7 +138,7 @@ function App() {
 					)}
 					{!isFetching && !isError && (
 						<span>
-							Returned <b>{records.length}</b> of <b>{totalRecords}</b> results
+							Returned <b>{records.length}</b> of <b>{totalRecordCount}</b> results
 						</span>
 					)}
 					{!isFetching && isError && (
