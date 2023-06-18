@@ -1,12 +1,12 @@
-import { Link } from "react-router-dom"
-
+import { Link } from 'react-router-dom';
 
 export function DataProcessing() {
-
-    return (
-        <>
-            <Link to="/">Back</Link>
-            <p>DATA PROCESSING...</p>
-        </>
-    )
+	return (
+		<>
+			<main>
+				<Link to='/'>Back</Link>
+				<p>DATA PROCESSING...</p>
+			</main>
+		</>
+	);
 }

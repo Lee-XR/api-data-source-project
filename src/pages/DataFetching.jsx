@@ -11,6 +11,7 @@ import { BandsInTown } from '../components/BandsInTown.jsx';
 import { Spinner } from '../components/Spinner.jsx';
 
 import '../App.css';
+import { Link } from 'react-router-dom';
 
 // Individual API component and fetch data function
 const ComponentMap = {
@@ -41,8 +42,13 @@ export function DataFetching() {
 	const [isError, setIsError] = useState(false);
 	const [errorMsg, setErrorMsg] = useState('');
 
-	const { records, setRecords, totalRecordCount, setTotalRecordCount } =
-		useContext(RecordsContext);
+	const {
+		records,
+		setRecords,
+		totalRecordCount,
+		setTotalRecordCount,
+		allowProcessing,
+	} = useContext(RecordsContext);
 
 	// Return selected API component
 	const ApiComponent = ComponentMap[selectedApi].component;
@@ -170,6 +176,9 @@ export function DataFetching() {
 					>
 						Reset Results
 					</button>
+					<Link to='data-processing'>
+						<button disabled={!allowProcessing}>Process Data</button>
+					</Link>
 				</div>
 
 				{/* Display selected API options */}
