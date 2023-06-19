@@ -2,12 +2,8 @@ import { skiddleInstance } from '../configs/axiosConfig';
 
 // Single fetching
 async function singleFetch(data) {
-	console.log(import.meta.env);
-	// console.log( import.meta.env.MODE === 'production'
-	// ? import.meta.env.VITE_SKIDDLE_SDK_URL_PROD
-	// : import.meta.env.VITE_SKIDDLE_SDK_URL_DEV);
 
-	return await skiddleInstance.post('/api/skiddle-api-php', data).then((response) => {
+	return await skiddleInstance.post('/api/skiddle-api-php/', data).then((response) => {
 		const isArray = Array.isArray(response.data.results);
 
 		return {

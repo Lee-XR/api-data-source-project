@@ -1,17 +1,16 @@
 import { useContext, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { fetchSkiddle } from '../api/fetchSkiddleApi.js';
 import { fetchDataThistle } from '../api/fetchDataThistleApi.js';
 import { fetchBandsInTown } from '../api/fetchBandsInTownApi.js';
 import { RecordsContext } from '../contexts/RecordsContext.jsx';
 
 import { Header } from '../components/Header.jsx';
+import { ApiSelection } from '../components/ApiSelection.jsx';
 import { Skiddle } from '../components/Skiddle.jsx';
 import { DataThistle } from '../components/DataThistle.jsx';
 import { BandsInTown } from '../components/BandsInTown.jsx';
 import { Spinner } from '../components/Spinner.jsx';
-
-import '../App.css';
-import { Link } from 'react-router-dom';
 
 // Individual API component and fetch data function
 const ComponentMap = {
@@ -30,6 +29,12 @@ const ComponentMap = {
 };
 
 export function DataFetching() {
+	const { getRecords, getTotalRecordCount, getAllowProcessing } = useContext(RecordsContext);
+	const [records, setRecords] = getRecords;
+	const [totalRecordCount, setTotalRecordCount] = getTotalRecordCount;
+	const [allowProcessing] = getAllowProcessing;
+
+
 	const [selectedApi, setSelectedApi] = useState('Skiddle');
 	const [apiUrl, setApiUrl] = useState('');
 	const [apiEndpoint, setApiEndpoint] = useState('');
@@ -41,14 +46,6 @@ export function DataFetching() {
 	const [isFetching, setIsFetching] = useState(false);
 	const [isError, setIsError] = useState(false);
 	const [errorMsg, setErrorMsg] = useState('');
-
-	const {
-		records,
-		setRecords,
-		totalRecordCount,
-		setTotalRecordCount,
-		allowProcessing,
-	} = useContext(RecordsContext);
 
 	// Return selected API component
 	const ApiComponent = ComponentMap[selectedApi].component;
@@ -110,15 +107,14 @@ export function DataFetching() {
 		const uppercaseName = selectedApi.toUpperCase();
 		setApiUrl(import.meta.env[`VITE_${uppercaseName}_API_URL`]);
 		setFetchApi(() => ComponentMap[selectedApi].fetchFunc);
-
-		setTotalRecordCount(0);
-		setRecords([]);
 	}, [selectedApi]);
 
 	return (
 		<>
 			{/* Header with API selection */}
-			<Header setSelectedApi={setSelectedApi} />
+			<Header>
+				<ApiSelection setSelectedApi={setSelectedApi} />
+			</Header>
 
 			<main>
 				{/* API name, URL & search parameters */}

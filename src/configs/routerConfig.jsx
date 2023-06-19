@@ -3,19 +3,20 @@ import { createBrowserRouter } from "react-router-dom";
 import { App } from '../App.jsx';
 import { DataFetching } from '../pages/DataFetching.jsx';
 import { DataProcessing } from '../pages/DataProcessing.jsx';
+import { ProtectedRoute } from '../components/ProtectedRoute.jsx';
 
 export const router = createBrowserRouter([
     {
 		path: "/",
-		Component: App,
+		element: <App />,
 		children: [
 			{
 				index: true,
-				Component: DataFetching,
+				element: <DataFetching />,
 			},
 			{
 				path: "data-processing",
-				Component: DataProcessing
+				element: <ProtectedRoute><DataProcessing /></ProtectedRoute>
 			}
 		]
 	}

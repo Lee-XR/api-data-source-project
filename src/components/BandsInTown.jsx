@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { getCurrentDate } from '../utils/dateUtils.js';
 import { replaceWhiteSpace } from '../utils/stringUtils.js';
 
-import { OptionsSection } from './OptionsSection';
+import { ApiOptionsSection } from './ApiOptionsSection';
 
 import '../styles/apiOptions.css';
 
@@ -85,7 +85,7 @@ export function BandsInTown(props) {
 		<div className='api-options'>
 
 			{/* Select search type & artist search option input */}
-			<OptionsSection>
+			<ApiOptionsSection>
 				{/* Radio buttons search type selection row */}
 				<span className='option-title'>Select search type:</span>
 				<div
@@ -158,10 +158,10 @@ export function BandsInTown(props) {
 						onChange={(e) => setArtistId(e.target.valueAsNumber || '')}
 					/>
 				</div>
-			</OptionsSection>
+			</ApiOptionsSection>
 
 			{/* Select artist events date option */}
-			<OptionsSection isDisabled={searchType === 'artists'}>
+			<ApiOptionsSection isDisabled={searchType === 'artists'}>
 				<span className='option-title'>Search By Event Date:</span>
 				<label htmlFor='events-upcoming'>
 					<input
@@ -256,7 +256,7 @@ export function BandsInTown(props) {
 						</label>
 					</div>
 				</div>
-			</OptionsSection>
+			</ApiOptionsSection>
 		</div>
 	);
 }

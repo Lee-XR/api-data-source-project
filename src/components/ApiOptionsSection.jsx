@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 
 import '../styles/apiOptions.css';
 
-export function OptionsSection(props) {
+export function ApiOptionsSection(props) {
 	const { children, isDisabled } = props;
 
 	return (
@@ -14,11 +14,11 @@ export function OptionsSection(props) {
 	);
 }
 
-OptionsSection.propTypes = {
+ApiOptionsSection.propTypes = {
 	children: PropTypes.node,
 	isDisabled: PropTypes.bool,
 };
 
-OptionsSection.defaultProps = {
+ApiOptionsSection.defaultProps = {
     isDisabled: false
 }

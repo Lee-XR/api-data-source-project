@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider } from 'react-router-dom';
 
-import { router } from './configs/routerConfig.js';
+import { router } from './configs/routerConfig.jsx';
 import { RecordsContextProvider } from './contexts/RecordsContext.jsx';
 
 import './index.css';

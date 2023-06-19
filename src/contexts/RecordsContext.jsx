@@ -1,29 +1,50 @@
 import { createContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
-export const RecordsContext = createContext([]);
+import venueRecords from '../assets/json/Skiddle-venues.json';
 
-export function RecordsContextProvider(props) {
-	const [records, setRecords] = useState([]);
-	const [totalRecordCount, setTotalRecordCount] = useState(0);
+const testRecords = [
+	{
+		id: 1,
+		name: 'Tom',
+		age: 15
+	},
+	{
+		id: 2,
+		name: 'Jane',
+		age: 22
+	},
+	{
+		id: 3,
+		name: 'Bill',
+		age: 53
+	}
+]
+
+const RecordsContext = createContext([]);
+
+function RecordsContextProvider({ children }) {
+	const [records, setRecords] = useState(testRecords);
+	const [totalRecordCount, setTotalRecordCount] = useState(records.length);
 	const [allowProcessing, setAllowProcessing] = useState(false);
 
-    useEffect(() => {
-        setAllowProcessing(records.length > 0);
-    }, records);
+	useEffect(() => {
+		if (records.length > 0) {
+			setAllowProcessing(true);
+		} else {
+			setAllowProcessing(false);
+		}
+	}, [records]);
 
 	return (
 		<RecordsContext.Provider
 			value={{
-				records,
-				setRecords,
-				totalRecordCount,
-				setTotalRecordCount,
-				allowProcessing,
-				setAllowProcessing,
+				getRecords: [records, setRecords],
+				getTotalRecordCount: [totalRecordCount, setTotalRecordCount],
+				getAllowProcessing: [allowProcessing, setAllowProcessing],
 			}}
 		>
-			{props.children}
+			{children}
 		</RecordsContext.Provider>
 	);
 }
@@ -31,3 +52,5 @@ export function RecordsContextProvider(props) {
 RecordsContextProvider.propTypes = {
 	children: PropTypes.node,
 };
+
+export { RecordsContext, RecordsContextProvider }
