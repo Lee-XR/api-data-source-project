@@ -1,7 +1,7 @@
 import { dataProcessInstance } from "../configs/axiosConfig";
 
 async function mapFields(records) {
- await dataProcessInstance.post('/process/mapping', records)
+ await dataProcessInstance.post('/mapping/skiddle', records)
     .then((response) => {
         console.log(response);
     })

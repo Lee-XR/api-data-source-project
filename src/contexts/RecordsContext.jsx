@@ -24,7 +24,8 @@ const testRecords = [
 const RecordsContext = createContext([]);
 
 function RecordsContextProvider({ children }) {
-	const [records, setRecords] = useState(testRecords);
+	const [records, setRecords] = useState(venueRecords);
+	// const [records, setRecords] = useState(testRecords);
 	const [totalRecordCount, setTotalRecordCount] = useState(records.length);
 	const [allowProcessing, setAllowProcessing] = useState(false);
 
