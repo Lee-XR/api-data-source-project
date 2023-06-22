@@ -37,7 +37,7 @@
 .search-input {
     width: 100%;
 	display: grid;
-	grid-template-columns: 180px 1fr;
+	grid-template-columns: 30% 1fr;
     text-align: left;
 }
 

@@ -1,19 +1,40 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
-export const RecordsContext = createContext([]);
+const RecordsContext = createContext(null);
 
-export function RecordsContextProvider(props) {
-    const [records, setRecords] = useState([]);
-    const [totalRecordCount, setTotalRecordCount] = useState(0);
+function RecordsContextProvider({ children }) {
+	const [records, setRecords] = useState([]);
+	const [totalRecordCount, setTotalRecordCount] = useState(records.length);
+	const [mappedRecordsString, setMappedRecordsString] = useState('');
+	const [recordType, setRecordType] = useState('venues');
+	const [allowProcessing, setAllowProcessing] = useState(false);
 
-    return (
-        <RecordsContext.Provider value={{records, setRecords, totalRecordCount, setTotalRecordCount}}>
-            {props.children}
-        </RecordsContext.Provider>
-    )
+	useEffect(() => {
+		if (records.length > 0) {
+			setAllowProcessing(true);
+		} else {
+			setAllowProcessing(false);
+		}
+	}, [records]);
+
+	return (
+		<RecordsContext.Provider
+			value={{
+				getRecords: [records, setRecords],
+				getTotalRecordCount: [totalRecordCount, setTotalRecordCount],
+				getRecordType: [recordType, setRecordType],
+				getAllowProcessing: [allowProcessing, setAllowProcessing],
+				getMappedRecordsString: [mappedRecordsString, setMappedRecordsString]
+			}}
+		>
+			{children}
+		</RecordsContext.Provider>
+	);
 }
 
 RecordsContextProvider.propTypes = {
-    children: PropTypes.node
-}
+	children: PropTypes.node,
+};
+
+export { RecordsContext, RecordsContextProvider }

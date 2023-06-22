@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
-import { OptionsSection } from './OptionsSection';
+import { ApiOptionsSection } from './ApiOptionsSection';
 
 import eventTypes from '../assets/json/Skiddle Event Types.json';
 import venueTypes from '../assets/json/Skiddle Venue Types.json';
@@ -111,6 +111,7 @@ export function Skiddle(props) {
 		setSearchType(type);
 		setCanIndivSearch(type === 'events');
 		setCanGeoSearch(type === 'events' || type === 'venues');
+		setIsLatLongGeo(true);
 		setCanKeywordSearch(type === 'events' || type === 'artists');
 		setCanTypeSearch(type === 'events' || type === 'venues');
 		setLimit(type === 'artists' ? 10 : 20);
@@ -161,7 +162,7 @@ export function Skiddle(props) {
 	return (
 		<div className='api-options'>
 			{/* Select search type */}
-			<OptionsSection>
+			<ApiOptionsSection>
 				<span className='option-title'>Select search type:</span>
 
 				{/* Radio buttons search type selection row */}
@@ -246,10 +247,10 @@ export function Skiddle(props) {
 						}}
 					/>
 				</label>
-			</OptionsSection>
+			</ApiOptionsSection>
 
 			{/* Search by geographic location data */}
-			<OptionsSection isDisabled={!canGeoSearch}>
+			<ApiOptionsSection isDisabled={!canGeoSearch}>
 				<span className='option-title'>Geographic search using:</span>
 
 				{/* Radio buttons geo search method selection row */}
@@ -270,7 +271,6 @@ export function Skiddle(props) {
 							type='radio'
 							name='geo-search-type'
 							id='city-radio'
-							checked={!isLatLongGeo}
 							disabled={!canGeoSearch || searchType === 'venues'}
 							onChange={() => setIsLatLongGeo(false)}
 						/>
@@ -349,10 +349,10 @@ export function Skiddle(props) {
 						}}
 					/>
 				</label>
-			</OptionsSection>
+			</ApiOptionsSection>
 
 			{/* Search by other type ID */}
-			<OptionsSection
+			<ApiOptionsSection
 				isDisabled={searchType !== 'events' && searchType !== 'artists'}
 			>
 				{/* Checkbox select type ID search */}
@@ -509,10 +509,10 @@ export function Skiddle(props) {
 						))}
 					</select>
 				</div>
-			</OptionsSection>
+			</ApiOptionsSection>
 
 			{/* Search by name, data range OR type, set records return limit */}
-			<OptionsSection>
+			<ApiOptionsSection>
 				{/* Keyword search input */}
 				<label
 					htmlFor='keyword-search'
@@ -647,7 +647,7 @@ export function Skiddle(props) {
 						}}
 					/>
 				</label>
-			</OptionsSection>
+			</ApiOptionsSection>
 		</div>
 	);
 }
