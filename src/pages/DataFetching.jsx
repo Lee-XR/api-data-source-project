@@ -10,9 +10,10 @@ import { Spinner } from '../components/Spinner.jsx';
 
 
 export function DataFetching() {
-	const { getRecords, getTotalRecordCount, getAllowProcessing } = useContext(RecordsContext);
+	const { getRecords, getTotalRecordCount, getRecordType, getAllowProcessing } = useContext(RecordsContext);
 	const [records, setRecords] = getRecords;
 	const [totalRecordCount, setTotalRecordCount] = getTotalRecordCount;
+	const [recordType, setRecordType] = getRecordType;
 	const [allowProcessing] = getAllowProcessing;
 	const { apiState } = useContext(ApiContext);
 
@@ -32,10 +33,12 @@ export function DataFetching() {
 	async function fetchData() {
 		setIsFetching(true);
 		setIsError(false);
+
 		await apiState.fetchFunc(apiEndpoint, apiSingleId, apiParams)
 			.then(({ totalHits, totalRecords }) => {
 				setTotalRecordCount(parseInt(totalHits));
 				setRecords([...records, ...totalRecords]);
+				setRecordType(apiEndpoint);
 				setIsFetching(false);
 			})
 			.catch((err) => {
@@ -70,7 +73,7 @@ export function DataFetching() {
 		const jsonData = new Blob([JSON.stringify(records, null, 2)], {
 			type: 'application/json',
 		});
-		const filename =`${selectedApi}-${apiEndpoint}.json`;
+		const filename =`${apiState.name}-${apiEndpoint}.json`;
 		downloadFile(jsonData, filename);
 	}
 

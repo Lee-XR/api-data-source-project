@@ -1,13 +1,17 @@
 import { dataProcessInstance } from '../configs/axiosConfig';
-import { downloadFile } from '../utils/fileUtils';
 
 async function mapFields(apiName, records) {
 	return await dataProcessInstance
 		.post(`/mapping/${apiName}`, records)
 		.then((response) => {
-            const csvData = new Blob([response.data]);
-			downloadFile(csvData, 'mapped-fields.csv');
-			return;
+			if (response.data) {
+				return {
+					successMsg: 'Records mapped successfully.',
+					csvString: response.data
+				}
+			}
+			
+			throw new Error('No response found');
 		})
 		.catch((error) => {
 			if (error.response) {
@@ -18,8 +22,12 @@ async function mapFields(apiName, records) {
 		});
 }
 
-async function downloadCsv() {}
+async function compareRecords() {
+	alert('No function added yet');
+}
 
-async function saveToDatabase() {}
+async function saveToDatabase() {
+	alert('No function added yet');
+}
 
-export { mapFields, downloadCsv, saveToDatabase };
+export { mapFields, compareRecords, saveToDatabase };

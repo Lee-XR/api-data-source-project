@@ -1,13 +1,13 @@
 import { createContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
-import venueRecords from '../assets/json/Skiddle-venues.json';
-
 const RecordsContext = createContext(null);
 
 function RecordsContextProvider({ children }) {
-	const [records, setRecords] = useState(venueRecords);
+	const [records, setRecords] = useState([]);
 	const [totalRecordCount, setTotalRecordCount] = useState(records.length);
+	const [mappedRecordsString, setMappedRecordsString] = useState('');
+	const [recordType, setRecordType] = useState('venues');
 	const [allowProcessing, setAllowProcessing] = useState(false);
 
 	useEffect(() => {
@@ -23,7 +23,9 @@ function RecordsContextProvider({ children }) {
 			value={{
 				getRecords: [records, setRecords],
 				getTotalRecordCount: [totalRecordCount, setTotalRecordCount],
+				getRecordType: [recordType, setRecordType],
 				getAllowProcessing: [allowProcessing, setAllowProcessing],
+				getMappedRecordsString: [mappedRecordsString, setMappedRecordsString]
 			}}
 		>
 			{children}

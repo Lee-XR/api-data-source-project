@@ -111,6 +111,7 @@ export function Skiddle(props) {
 		setSearchType(type);
 		setCanIndivSearch(type === 'events');
 		setCanGeoSearch(type === 'events' || type === 'venues');
+		setIsLatLongGeo(true);
 		setCanKeywordSearch(type === 'events' || type === 'artists');
 		setCanTypeSearch(type === 'events' || type === 'venues');
 		setLimit(type === 'artists' ? 10 : 20);
@@ -270,7 +271,6 @@ export function Skiddle(props) {
 							type='radio'
 							name='geo-search-type'
 							id='city-radio'
-							checked={!isLatLongGeo}
 							disabled={!canGeoSearch || searchType === 'venues'}
 							onChange={() => setIsLatLongGeo(false)}
 						/>
