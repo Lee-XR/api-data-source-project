@@ -1,16 +1,15 @@
-import { useState } from 'react';
-import PropTypes from 'prop-types';
+import { useContext, useState } from 'react';
+import { ApiContext } from '../contexts/ApiContext';
+
 import '../styles/header.css';
 
-const apiArray = ['Skiddle', 'DataThistle', 'BandsInTown'];
-
-export function ApiSelection(props) {
-    const { setSelectedApi } = props;
-	const [selectedNum, setSelectedNum] = useState(0);
+export function ApiSelection() {
+	const { apiArray, apiState, apiDispatch } = useContext(ApiContext);
+	const [selectedNum, setSelectedNum] = useState(apiArray.indexOf(apiState.name));
 
 	function selectApi(index) {
 		setSelectedNum(index);
-        setSelectedApi(apiArray[index]);
+		apiDispatch({ type: 'CHANGE_API', apiName: apiArray[index] });
 	}
 
 	return (
@@ -25,8 +24,4 @@ export function ApiSelection(props) {
 			))}
 		</ul>
 	);
-}
-
-ApiSelection.propTypes = {
-    setSelectedApi: PropTypes.func
 }

@@ -1,7 +1,12 @@
 import { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { mapFields, downloadCsv, saveToDatabase } from '../api/dataProcessApi.js';
 import { RecordsContext } from '../contexts/RecordsContext.jsx';
+import { ApiContext } from '../contexts/ApiContext.jsx';
+import {
+	mapFields,
+	downloadCsv,
+	saveToDatabase,
+} from '../api/dataProcessApi.js';
 
 import { Header } from '../components/Header.jsx';
 import { Spinner } from '../components/Spinner.jsx';
@@ -22,29 +27,32 @@ const clickBtns = [
 ];
 
 export function DataProcessing() {
-	const { getRecords, getTotalRecordCount } = useContext(RecordsContext);
+	const { getRecords } = useContext(RecordsContext);
 	const [records] = getRecords;
-	const [totalRecordCount] = getTotalRecordCount;
+	const { apiState } = useContext(ApiContext);
 
 	const [isProcessing, setIsProcessing] = useState(false);
+	const [processingDone, setProcessingDone] = useState(false);
 	const [isError, setIsError] = useState(false);
 	const [errorMsg, setErrorMsg] = useState('');
 
 	async function runFunction(callback) {
 		setIsProcessing(true);
 		setIsError(false);
+		setProcessingDone(false);
+		const apiName = apiState.name.toLowerCase();
 
-		await callback(records)
-			.then((response) => {
+		await callback(apiName, records)
+			.then(() => {
 				setIsProcessing(false);
 				setIsError(false);
-				console.log(response);
+				setProcessingDone(true);
 			})
 			.catch((err) => {
 				setIsProcessing(false);
 				setIsError(true);
-				setErrorMsg(err.message)
-				console.error(err.message);
+				setErrorMsg(err.message);
+				console.error(err);
 			});
 	}
 
@@ -54,7 +62,7 @@ export function DataProcessing() {
 				<Link to='/'>Back</Link>
 			</Header>
 			<main>
-				<h2>Data Processing</h2>
+				<h2>{apiState.name} Api Data Processing</h2>
 				<div className='msg-box'>
 					{isProcessing && !isError && (
 						<>
@@ -62,9 +70,14 @@ export function DataProcessing() {
 							<Spinner />
 						</>
 					)}
-					{!isProcessing && !isError && (
+					{!isProcessing && !isError && !processingDone && (
 						<span>
 							<b>{records.length}</b> results
+						</span>
+					)}
+					{!isProcessing && !isError && processingDone && (
+						<span>
+							Processing Done
 						</span>
 					)}
 					{!isProcessing && isError && (

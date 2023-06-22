@@ -3,29 +3,10 @@ import PropTypes from 'prop-types';
 
 import venueRecords from '../assets/json/Skiddle-venues.json';
 
-const testRecords = [
-	{
-		id: 1,
-		name: 'Tom',
-		age: 15
-	},
-	{
-		id: 2,
-		name: 'Jane',
-		age: 22
-	},
-	{
-		id: 3,
-		name: 'Bill',
-		age: 53
-	}
-]
-
-const RecordsContext = createContext([]);
+const RecordsContext = createContext(null);
 
 function RecordsContextProvider({ children }) {
 	const [records, setRecords] = useState(venueRecords);
-	// const [records, setRecords] = useState(testRecords);
 	const [totalRecordCount, setTotalRecordCount] = useState(records.length);
 	const [allowProcessing, setAllowProcessing] = useState(false);
 

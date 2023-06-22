@@ -1,46 +1,24 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchSkiddle } from '../api/fetchSkiddleApi.js';
-import { fetchDataThistle } from '../api/fetchDataThistleApi.js';
-import { fetchBandsInTown } from '../api/fetchBandsInTownApi.js';
+import { downloadFile } from '../utils/fileUtils.js';
+import { ApiContext } from '../contexts/ApiContext.jsx';
 import { RecordsContext } from '../contexts/RecordsContext.jsx';
 
 import { Header } from '../components/Header.jsx';
 import { ApiSelection } from '../components/ApiSelection.jsx';
-import { Skiddle } from '../components/Skiddle.jsx';
-import { DataThistle } from '../components/DataThistle.jsx';
-import { BandsInTown } from '../components/BandsInTown.jsx';
 import { Spinner } from '../components/Spinner.jsx';
 
-// Individual API component and fetch data function
-const ComponentMap = {
-	Skiddle: {
-		component: Skiddle,
-		fetchFunc: fetchSkiddle,
-	},
-	DataThistle: {
-		component: DataThistle,
-		fetchFunc: fetchDataThistle,
-	},
-	BandsInTown: {
-		component: BandsInTown,
-		fetchFunc: fetchBandsInTown,
-	},
-};
 
 export function DataFetching() {
 	const { getRecords, getTotalRecordCount, getAllowProcessing } = useContext(RecordsContext);
 	const [records, setRecords] = getRecords;
 	const [totalRecordCount, setTotalRecordCount] = getTotalRecordCount;
 	const [allowProcessing] = getAllowProcessing;
+	const { apiState } = useContext(ApiContext);
 
-
-	const [selectedApi, setSelectedApi] = useState('Skiddle');
-	const [apiUrl, setApiUrl] = useState('');
 	const [apiEndpoint, setApiEndpoint] = useState('');
 	const [apiSingleId, setApiSingleId] = useState(null);
 	const [apiParams, setApiParams] = useState('');
-	const [fetchApi, setFetchApi] = useState(null);
 	const [resetApi, setResetApi] = useState(null);
 
 	const [isFetching, setIsFetching] = useState(false);
@@ -48,13 +26,13 @@ export function DataFetching() {
 	const [errorMsg, setErrorMsg] = useState('');
 
 	// Return selected API component
-	const ApiComponent = ComponentMap[selectedApi].component;
+	const ApiComponent = apiState.component;
 
 	// Fetch data from API
 	async function fetchData() {
 		setIsFetching(true);
 		setIsError(false);
-		await fetchApi(apiEndpoint, apiSingleId, apiParams)
+		await apiState.fetchFunc(apiEndpoint, apiSingleId, apiParams)
 			.then(({ totalHits, totalRecords }) => {
 				setTotalRecordCount(parseInt(totalHits));
 				setRecords([...records, ...totalRecords]);
@@ -92,36 +70,23 @@ export function DataFetching() {
 		const jsonData = new Blob([JSON.stringify(records, null, 2)], {
 			type: 'application/json',
 		});
-		const url = window.URL.createObjectURL(jsonData);
-		const link = document.createElement('a');
-		link.style.display = 'none';
-		link.href = url;
-		link.download = `${selectedApi}-${apiEndpoint}.json`;
-		document.body.appendChild(link);
-		link.click();
-		window.URL.revokeObjectURL(url);
+		const filename =`${selectedApi}-${apiEndpoint}.json`;
+		downloadFile(jsonData, filename);
 	}
-
-	// Set selected API URL & axios method to fetch data
-	useEffect(() => {
-		const uppercaseName = selectedApi.toUpperCase();
-		setApiUrl(import.meta.env[`VITE_${uppercaseName}_API_URL`]);
-		setFetchApi(() => ComponentMap[selectedApi].fetchFunc);
-	}, [selectedApi]);
 
 	return (
 		<>
 			{/* Header with API selection */}
 			<Header>
-				<ApiSelection setSelectedApi={setSelectedApi} />
+				<ApiSelection />
 			</Header>
 
 			<main>
 				{/* API name, URL & search parameters */}
-				<h2>{selectedApi} API</h2>
+				<h2>{apiState.name} API</h2>
 				<p>
 					<b>
-						{apiUrl}
+						{apiState.url}
 						{apiEndpoint}
 						{apiSingleId ? `/${apiSingleId}` : ''}
 						/?{new URLSearchParams(apiParams).toString()}
