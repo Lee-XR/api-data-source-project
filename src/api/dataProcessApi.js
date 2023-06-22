@@ -1,13 +1,8 @@
 import { dataProcessInstance } from '../configs/axiosConfig';
 
 async function mapFields(apiName, records) {
-	const path =
-		import.meta.env.MODE === 'production'
-			? `/processsing/mapping/${apiName}`
-			: `/mapping/${apiName}`;
-
 	return await dataProcessInstance
-		.post(path, records)
+		.post(`/mapping/${apiName}`, records)
 		.then((response) => {
 			if (response.data) {
 				return {
