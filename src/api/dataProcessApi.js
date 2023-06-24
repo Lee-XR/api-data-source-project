@@ -14,7 +14,7 @@ async function mapFields(apiName, records) {
 			throw new Error('No response found');
 		})
 		.catch((error) => {
-			if (error.response) {
+			if (error.response.data.error) {
 				throw new Error(error.response.data.error);
 			} else {
 				throw new Error(error.message);
@@ -22,12 +22,30 @@ async function mapFields(apiName, records) {
 		});
 }
 
-async function compareRecords() {
-	alert('No function added yet');
+async function matchRecords(apiName, csvString) {
+	return await dataProcessInstance
+		.post(`/matching/${apiName}`, csvString)
+		.then((response) => {
+			if (response.data) {
+				return {
+					successMsg: 'Records matched successfully.',
+				};
+			}
+
+			throw new Error('No response found');
+		})
+		.catch((error) => {
+			console.log(error);
+			if (error.response.data.error) {
+				throw new Error(error.response.data.error);
+			} else {
+				throw new Error(error.message);
+			}
+		});
 }
 
 async function saveToDatabase() {
 	alert('No function added yet');
 }
 
-export { mapFields, compareRecords, saveToDatabase };
+export { mapFields, matchRecords, saveToDatabase };

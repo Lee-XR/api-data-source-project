@@ -4,7 +4,7 @@ import { RecordsContext } from '../contexts/RecordsContext.jsx';
 import { ApiContext } from '../contexts/ApiContext.jsx';
 import {
 	mapFields,
-	compareRecords,
+	matchRecords,
 	saveToDatabase,
 } from '../api/dataProcessApi.js';
 import { downloadFile } from '../utils/fileUtils.js';
@@ -26,27 +26,66 @@ export function DataProcessing() {
 	const [successMsg, setSuccessMsg] = useState('');
 	const [errorMsg, setErrorMsg] = useState('');
 
-	async function runFunction(callback) {
+	function initSettings() {
 		setIsProcessing(true);
 		setProcessingDone(false);
 		setIsError(false);
+	}
+
+	function handleResponse(response) {
+		setIsProcessing(false);
+		setIsError(false);
+		setProcessingDone(true);
+		setSuccessMsg(response.successMsg);
+	}
+
+	function handleError(error) {
+		console.log(error);
+		setIsProcessing(false);
+		setIsError(true);
+		setErrorMsg(error.message);
+		console.error(error);
+	}
+
+	async function mapFieldFunction() {
+		initSettings();
 		const apiName = apiState.name.toLowerCase();
 
-		await callback(apiName, records)
+		await mapFields(apiName, records)
 			.then((response) => {
 				if (response.csvString) {
 					setMappedRecordsString(response.csvString);
 				}
-				setIsProcessing(false);
-				setIsError(false);
-				setProcessingDone(true);
-				setSuccessMsg(response.successMsg);
+				handleResponse(response);
 			})
-			.catch((err) => {
-				setIsProcessing(false);
-				setIsError(true);
-				setErrorMsg(err.message);
-				console.error(err);
+			.catch((error) => {
+				handleError(error);
+			});
+	}
+
+	async function matchRecordsFunction() {
+		initSettings();
+		const apiName = apiState.name.toLowerCase();
+
+		await matchRecords(apiName, mappedRecordsString)
+			.then((response) => {
+				handleResponse(response);
+			})
+			.catch((error) => {
+				handleError(error);
+			});
+	}
+
+	async function saveToDatabaseFunction() {
+		initSettings();
+		const apiName = apiState.name.toLowerCase();
+
+		await saveToDatabase()
+			.then((response) => {
+				handleResponse(response);
+			})
+			.catch((error) => {
+				handleError(error);
 			});
 	}
 
@@ -87,7 +126,7 @@ export function DataProcessing() {
 				<div className='btns'>
 					<button
 						disabled={isProcessing || recordType !== 'venues'}
-						onClick={() => runFunction(mapFields)}
+						onClick={mapFieldFunction}
 					>
 						Map Venue Fields
 					</button>
@@ -99,13 +138,13 @@ export function DataProcessing() {
 					</button>
 					<button
 						disabled={isProcessing || recordType !== 'venues'}
-						onClick={() => compareRecords()}
+						onClick={matchRecordsFunction}
 					>
 						Compare Venue Records
 					</button>
 					<button
 						disabled={isProcessing || recordType !== 'venues'}
-						onClick={() => saveToDatabase()}
+						onClick={saveToDatabaseFunction}
 					>
 						Save To Database
 					</button>

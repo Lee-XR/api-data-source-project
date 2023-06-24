@@ -70,7 +70,7 @@ export async function fetchSkiddle(type, id, params) {
 			return { totalHits, totalRecords };
 		})
 		.catch((error) => {
-			if (error.response) {
+			if (error.response.data.error) {
 				throw new Error(error.response.data.error);
 			} else {
 				throw new Error(error.message);
