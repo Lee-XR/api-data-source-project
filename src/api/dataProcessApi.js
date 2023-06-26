@@ -4,17 +4,19 @@ async function mapFields(apiName, records) {
 	return await dataProcessInstance
 		.post(`/mapping/${apiName}`, records)
 		.then((response) => {
+			console.log(response.data);
 			if (response.data) {
 				return {
 					successMsg: 'Records mapped successfully.',
-					csvString: response.data,
+					mappedCsv: response.data.mappedCsv,
+					mappedCount: response.data.mappedCount
 				};
 			}
 
 			throw new Error('No response found');
 		})
 		.catch((error) => {
-			if (error.response.data.error) {
+			if (error.response?.data?.error) {
 				throw new Error(error.response.data.error);
 			} else {
 				throw new Error(error.message);
@@ -29,6 +31,10 @@ async function matchRecords(apiName, csvString) {
 			if (response.data) {
 				return {
 					successMsg: 'Records matched successfully.',
+					zeroMatchCsv: response.data.zeroMatchCsv,
+					zeroMatchCount: response.data.zeroMatchCount,
+					hasMatchCsv: response.data.hasMatchCsv,
+					hasMatchCount: response.data.hasMatchCount,
 				};
 			}
 
@@ -36,7 +42,7 @@ async function matchRecords(apiName, csvString) {
 		})
 		.catch((error) => {
 			console.log(error);
-			if (error.response.data.error) {
+			if (error.response?.data?.error) {
 				throw new Error(error.response.data.error);
 			} else {
 				throw new Error(error.message);

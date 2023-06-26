@@ -1,23 +1,30 @@
 import { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { RecordsContext } from '../contexts/RecordsContext.jsx';
+import { ResultsContext } from '../contexts/ResultsContext.jsx';
 import { ApiContext } from '../contexts/ApiContext.jsx';
 import {
 	mapFields,
 	matchRecords,
 	saveToDatabase,
 } from '../api/dataProcessApi.js';
-import { downloadFile } from '../utils/fileUtils.js';
 
 import { Header } from '../components/Header.jsx';
 import { Spinner } from '../components/Spinner.jsx';
+import { ResultsList } from '../components/ResultsList.jsx';
 
 export function DataProcessing() {
-	const { getRecords, getRecordType, getMappedRecordsString } =
-		useContext(RecordsContext);
+	const {
+		getRecords,
+		getRecordType,
+		getMappedCsv,
+		getZeroMatchCsv,
+		getHasMatchCsv,
+	} = useContext(ResultsContext);
 	const [records] = getRecords;
 	const [recordType] = getRecordType;
-	const [mappedRecordsString, setMappedRecordsString] = getMappedRecordsString;
+	const [mappedCsv, setMappedCsv] = getMappedCsv;
+	const [zeroMatchCsv, setZeroMatchCsv] = getZeroMatchCsv;
+	const [hasMatchCsv, setHasMatchCsv] = getHasMatchCsv;
 	const { apiState } = useContext(ApiContext);
 
 	const [isProcessing, setIsProcessing] = useState(false);
@@ -53,9 +60,7 @@ export function DataProcessing() {
 
 		await mapFields(apiName, records)
 			.then((response) => {
-				if (response.csvString) {
-					setMappedRecordsString(response.csvString);
-				}
+				setMappedCsv({ csvString: response.mappedCsv, count: response.mappedCount })
 				handleResponse(response);
 			})
 			.catch((error) => {
@@ -67,8 +72,10 @@ export function DataProcessing() {
 		initSettings();
 		const apiName = apiState.name.toLowerCase();
 
-		await matchRecords(apiName, mappedRecordsString)
+		await matchRecords(apiName, mappedCsv?.csvString)
 			.then((response) => {
+				setZeroMatchCsv({ csvString: response.zeroMatchCsv, count: response.zeroMatchCount });
+				setHasMatchCsv({ csvString: response.hasMatchCsv, count: response.hasMatchCount });
 				handleResponse(response);
 			})
 			.catch((error) => {
@@ -78,7 +85,7 @@ export function DataProcessing() {
 
 	async function saveToDatabaseFunction() {
 		initSettings();
-		const apiName = apiState.name.toLowerCase();
+		// const apiName = apiState.name.toLowerCase();
 
 		await saveToDatabase()
 			.then((response) => {
@@ -87,12 +94,6 @@ export function DataProcessing() {
 			.catch((error) => {
 				handleError(error);
 			});
-	}
-
-	// Download processed records as CSV file
-	function downloadCsv() {
-		const csvData = new Blob([mappedRecordsString]);
-		downloadFile(csvData, `${apiState.name}-mapped.csv`);
 	}
 
 	return (
@@ -130,17 +131,17 @@ export function DataProcessing() {
 					>
 						Map Venue Fields
 					</button>
-					<button
+					{/* <button
 						disabled={isProcessing || recordType !== 'venues'}
 						onClick={downloadCsv}
 					>
 						Download CSV
-					</button>
+					</button> */}
 					<button
 						disabled={isProcessing || recordType !== 'venues'}
 						onClick={matchRecordsFunction}
 					>
-						Compare Venue Records
+						Match Venue Records
 					</button>
 					<button
 						disabled={isProcessing || recordType !== 'venues'}
@@ -150,7 +151,15 @@ export function DataProcessing() {
 					</button>
 				</div>
 
-				{/* Manual comparison for mapped data */}
+				<ResultsList
+					results={{
+						records,
+						mappedCsv,
+						zeroMatchCsv,
+						hasMatchCsv,
+					}}
+					recordType={recordType}
+				/>
 			</main>
 		</>
 	);

@@ -3,24 +3,16 @@ import PropTypes from 'prop-types';
 
 import venueFields from '../assets/json/Skiddle-venues.json';
 
-const RecordsContext = createContext(null);
+const ResultsContext = createContext(null);
 
-function RecordsContextProvider({ children }) {
-	const [records, setRecords] = useState(venueFields);
+function ResultsContextProvider({ children }) {
+	const [records, setRecords] = useState([]);
 	const [totalRecordCount, setTotalRecordCount] = useState(records.length);
-	const [mappedRecordsString, setMappedRecordsString] = useState('');
+	const [mappedCsv, setMappedCsv] = useState({ csvString: '', count: 0 });
+	const [zeroMatchCsv, setZeroMatchCsv] = useState({ csvString: '', count: 0 });
+	const [hasMatchCsv, setHasMatchCsv] = useState({ csvString: '', count: 0 });
 	const [recordType, setRecordType] = useState('venues');
 	const [allowProcessing, setAllowProcessing] = useState(false);
-
-	useEffect(() => {
-		fetch('./Skiddle-mapped.csv')
-			.then((response) => {
-				return response.text();
-			})
-			.then((response) => {
-				setMappedRecordsString(response);
-			});
-	}, []);
 
 	useEffect(() => {
 		if (records.length > 0) {
@@ -30,23 +22,27 @@ function RecordsContextProvider({ children }) {
 		}
 	}, [records]);
 
+	console.log(allowProcessing);
+
 	return (
-		<RecordsContext.Provider
+		<ResultsContext.Provider
 			value={{
 				getRecords: [records, setRecords],
 				getTotalRecordCount: [totalRecordCount, setTotalRecordCount],
 				getRecordType: [recordType, setRecordType],
 				getAllowProcessing: [allowProcessing, setAllowProcessing],
-				getMappedRecordsString: [mappedRecordsString, setMappedRecordsString],
+				getMappedCsv: [mappedCsv, setMappedCsv],
+				getZeroMatchCsv: [zeroMatchCsv, setZeroMatchCsv],
+				getHasMatchCsv: [hasMatchCsv, setHasMatchCsv],
 			}}
 		>
 			{children}
-		</RecordsContext.Provider>
+		</ResultsContext.Provider>
 	);
 }
 
-RecordsContextProvider.propTypes = {
+ResultsContextProvider.propTypes = {
 	children: PropTypes.node,
 };
 
-export { RecordsContext, RecordsContextProvider };
+export { ResultsContext, ResultsContextProvider };

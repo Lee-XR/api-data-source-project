@@ -2,10 +2,10 @@ import { useContext } from "react";
 import { Navigate } from "react-router-dom";
 import PropTypes from "prop-types";
 
-import { RecordsContext } from "../contexts/RecordsContext";
+import { ResultsContext } from "../contexts/ResultsContext";
 
 export function ProtectedRoute({ children }) {
-    const { getAllowProcessing } = useContext(RecordsContext);
+    const { getAllowProcessing } = useContext(ResultsContext);
     const [allowProcessing] = getAllowProcessing;
 
     if (!allowProcessing) {
