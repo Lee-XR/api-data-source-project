@@ -1,23 +1,19 @@
 function downloadFile(filedata, filename, filetype) {
 	let blobData = [];
-	let type = '';
 
-	switch(filetype) {
+	switch (filetype) {
 		case 'json':
-			type = "application/json";
 			blobData = new Blob([JSON.stringify(filedata, null, 2)], {
-				type: type
+				type: 'application/json',
 			});
 			break;
 		case 'csv':
-			type = "text/csv";
 			blobData = new Blob([filedata], {
-				type: type
-			})
+				type: 'text/csv',
+			});
 			break;
 		default:
 			blobData = [];
-			type = "";
 	}
 
 	const url = window.URL.createObjectURL(blobData);

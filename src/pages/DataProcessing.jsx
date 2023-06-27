@@ -5,7 +5,6 @@ import { ApiContext } from '../contexts/ApiContext.jsx';
 import {
 	mapFields,
 	matchRecords,
-	saveToDatabase,
 } from '../api/dataProcessApi.js';
 
 import { Header } from '../components/Header.jsx';
@@ -84,19 +83,6 @@ export function DataProcessing() {
 			});
 	}
 
-	async function saveToDatabaseFunction() {
-		initSettings();
-		// const apiName = apiState.name.toLowerCase();
-
-		await saveToDatabase()
-			.then((response) => {
-				handleResponse(response);
-			})
-			.catch((error) => {
-				handleError(error);
-			});
-	}
-
 	return (
 		<>
 			<Header>
@@ -107,6 +93,7 @@ export function DataProcessing() {
 				<p>
 					Fetched <b>{records.length}</b> results
 				</p>
+
 				<div className='msg-box'>
 					{!isProcessing && !isError && !processingDone && (
 						<span>Awaiting Process</span>
@@ -137,12 +124,6 @@ export function DataProcessing() {
 						onClick={matchRecordsFunction}
 					>
 						Match Venue Records
-					</button>
-					<button
-						disabled={isProcessing || recordType !== 'venues'}
-						onClick={saveToDatabaseFunction}
-					>
-						Save To Database
 					</button>
 				</div>
 

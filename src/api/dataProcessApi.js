@@ -4,7 +4,6 @@ async function mapFields(apiName, records) {
 	return await dataProcessInstance
 		.post(`/mapping/${apiName}`, records)
 		.then((response) => {
-			console.log(response.data);
 			if (response.data) {
 				return {
 					successMsg: 'Records mapped successfully.',
@@ -50,8 +49,4 @@ async function matchRecords(apiName, csvString) {
 		});
 }
 
-async function saveToDatabase() {
-	alert('No function added yet');
-}
-
-export { mapFields, matchRecords, saveToDatabase };
+export { mapFields, matchRecords };

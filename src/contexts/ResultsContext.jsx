@@ -1,12 +1,10 @@
 import { createContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
-import venueFields from '../assets/json/Skiddle-venues.json';
-
 const ResultsContext = createContext(null);
 
 function ResultsContextProvider({ children }) {
-	const [records, setRecords] = useState(venueFields);
+	const [records, setRecords] = useState([]);
 	const [totalRecordCount, setTotalRecordCount] = useState(records.length);
 	const [mappedCsv, setMappedCsv] = useState({ csvString: '', count: 0 });
 	const [zeroMatchCsv, setZeroMatchCsv] = useState({ csvString: '', count: 0 });
