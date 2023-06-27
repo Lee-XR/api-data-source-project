@@ -40,7 +40,6 @@ async function matchRecords(apiName, csvString) {
 			throw new Error('No response found');
 		})
 		.catch((error) => {
-			console.log(error);
 			if (error.response?.data?.error) {
 				throw new Error(error.response.data.error);
 			} else {
