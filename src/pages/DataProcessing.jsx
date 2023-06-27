@@ -44,6 +44,7 @@ export function DataProcessing() {
 		setIsError(false);
 		setProcessingDone(true);
 		setSuccessMsg(response.successMsg);
+		setTimeout(() => setProcessingDone(false), 5000);
 	}
 
 	function handleError(error) {
@@ -131,12 +132,6 @@ export function DataProcessing() {
 					>
 						Map Venue Fields
 					</button>
-					{/* <button
-						disabled={isProcessing || recordType !== 'venues'}
-						onClick={downloadCsv}
-					>
-						Download CSV
-					</button> */}
 					<button
 						disabled={isProcessing || recordType !== 'venues'}
 						onClick={matchRecordsFunction}
@@ -151,15 +146,7 @@ export function DataProcessing() {
 					</button>
 				</div>
 
-				<ResultsList
-					results={{
-						records,
-						mappedCsv,
-						zeroMatchCsv,
-						hasMatchCsv,
-					}}
-					recordType={recordType}
-				/>
+				<ResultsList />
 			</main>
 		</>
 	);

@@ -289,6 +289,7 @@ export function Skiddle(props) {
 							<input
 								type='number'
 								name='latitude'
+								step="0.1"
 								disabled={!canGeoSearch}
 								value={latitude}
 								onChange={(e) => {
@@ -305,6 +306,7 @@ export function Skiddle(props) {
 							<input
 								type='number'
 								name='longitude'
+								step="0.1"
 								disabled={!canGeoSearch}
 								value={longitude}
 								onChange={(e) => {
@@ -341,6 +343,7 @@ export function Skiddle(props) {
 					<input
 						type='number'
 						name='radius'
+						step="0.1"
 						disabled={!canGeoSearch}
 						value={radius}
 						onChange={(e) => {

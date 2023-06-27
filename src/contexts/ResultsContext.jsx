@@ -6,7 +6,7 @@ import venueFields from '../assets/json/Skiddle-venues.json';
 const ResultsContext = createContext(null);
 
 function ResultsContextProvider({ children }) {
-	const [records, setRecords] = useState([]);
+	const [records, setRecords] = useState(venueFields);
 	const [totalRecordCount, setTotalRecordCount] = useState(records.length);
 	const [mappedCsv, setMappedCsv] = useState({ csvString: '', count: 0 });
 	const [zeroMatchCsv, setZeroMatchCsv] = useState({ csvString: '', count: 0 });
@@ -21,8 +21,6 @@ function ResultsContextProvider({ children }) {
 			setAllowProcessing(false);
 		}
 	}, [records]);
-
-	console.log(allowProcessing);
 
 	return (
 		<ResultsContext.Provider
