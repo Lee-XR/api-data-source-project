@@ -1,16 +1,16 @@
 import { useContext, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { downloadFile } from '../utils/fileUtils.js';
 import { ApiContext } from '../contexts/ApiContext.jsx';
-import { RecordsContext } from '../contexts/RecordsContext.jsx';
+import { ResultsContext } from '../contexts/ResultsContext.jsx';
 
 import { Header } from '../components/Header.jsx';
 import { ApiSelection } from '../components/ApiSelection.jsx';
 import { Spinner } from '../components/Spinner.jsx';
 
-
 export function DataFetching() {
-	const { getRecords, getTotalRecordCount, getRecordType, getAllowProcessing } = useContext(RecordsContext);
+	const { getRecords, getTotalRecordCount, getRecordType, getAllowProcessing } =
+		useContext(ResultsContext);
 	const [records, setRecords] = getRecords;
 	const [totalRecordCount, setTotalRecordCount] = getTotalRecordCount;
 	const [recordType, setRecordType] = getRecordType;
@@ -25,6 +25,7 @@ export function DataFetching() {
 	const [isFetching, setIsFetching] = useState(false);
 	const [isError, setIsError] = useState(false);
 	const [errorMsg, setErrorMsg] = useState('');
+	const navigate = useNavigate();
 
 	// Return selected API component
 	const ApiComponent = apiState.component;
@@ -34,7 +35,8 @@ export function DataFetching() {
 		setIsFetching(true);
 		setIsError(false);
 
-		await apiState.fetchFunc(apiEndpoint, apiSingleId, apiParams)
+		await apiState
+			.fetchFunc(apiEndpoint, apiSingleId, apiParams)
 			.then(({ totalHits, totalRecords }) => {
 				setTotalRecordCount(parseInt(totalHits));
 				setRecords([...records, ...totalRecords]);
@@ -70,11 +72,15 @@ export function DataFetching() {
 
 	// Download records as JSON file
 	function downloadJson() {
-		const jsonData = new Blob([JSON.stringify(records, null, 2)], {
-			type: 'application/json',
-		});
-		const filename =`${apiState.name}-${apiEndpoint}.json`;
-		downloadFile(jsonData, filename);
+		if (records.length > 0) {
+			const filetype = 'json';
+			const filename = `${apiState.name}-${recordType}.json`;
+			downloadFile(records, filename, filetype);
+		} else {
+			setIsFetching(false);
+			setIsError(true);
+			setErrorMsg('No records available to download.');
+		}
 	}
 
 	return (
@@ -117,32 +123,40 @@ export function DataFetching() {
 
 				<div className='btns'>
 					<button
+						className={isFetching ? 'disabled' : ''}
 						onClick={fetchData}
 						disabled={isFetching}
 					>
 						Fetch Data
 					</button>
 					<button
+						className={isFetching ? 'disabled' : ''}
 						onClick={downloadJson}
 						disabled={isFetching}
 					>
 						Download JSON
 					</button>
 					<button
+						className={isFetching ? 'disabled' : ''}
 						onClick={resetOptions}
 						disabled={isFetching}
 					>
 						Reset Options
 					</button>
 					<button
+						className={isFetching ? 'disabled' : ''}
 						onClick={resetRecords}
 						disabled={isFetching}
 					>
 						Reset Results
 					</button>
-					<Link to='data-processing'>
-						<button disabled={!allowProcessing}>Process Data</button>
-					</Link>
+					<button
+						className={!allowProcessing ? 'disabled' : ''}
+						onClick={() => navigate('data-processing')}
+						disabled={!allowProcessing}
+					>
+						Process Data
+					</button>
 				</div>
 
 				{/* Display selected API options */}

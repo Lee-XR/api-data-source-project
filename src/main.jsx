@@ -4,16 +4,16 @@ import { RouterProvider } from 'react-router-dom';
 
 import { router } from './configs/routerConfig.jsx';
 import { ApiContextProvider } from './contexts/ApiContext.jsx';
-import { RecordsContextProvider } from './contexts/RecordsContext.jsx';
+import { ResultsContextProvider } from './contexts/ResultsContext.jsx';
 
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
 	// <React.StrictMode>
 	<ApiContextProvider>
-		<RecordsContextProvider>
+		<ResultsContextProvider>
 			<RouterProvider router={router} />
-		</RecordsContextProvider>
+		</ResultsContextProvider>
 	</ApiContextProvider>
 	// </React.StrictMode>,
 );

@@ -1,12 +1,14 @@
 import { createContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
-const RecordsContext = createContext(null);
+const ResultsContext = createContext(null);
 
-function RecordsContextProvider({ children }) {
+function ResultsContextProvider({ children }) {
 	const [records, setRecords] = useState([]);
 	const [totalRecordCount, setTotalRecordCount] = useState(records.length);
-	const [mappedRecordsString, setMappedRecordsString] = useState('');
+	const [mappedCsv, setMappedCsv] = useState({ csvString: '', count: 0 });
+	const [zeroMatchCsv, setZeroMatchCsv] = useState({ csvString: '', count: 0 });
+	const [hasMatchCsv, setHasMatchCsv] = useState({ csvString: '', count: 0 });
 	const [recordType, setRecordType] = useState('venues');
 	const [allowProcessing, setAllowProcessing] = useState(false);
 
@@ -19,22 +21,24 @@ function RecordsContextProvider({ children }) {
 	}, [records]);
 
 	return (
-		<RecordsContext.Provider
+		<ResultsContext.Provider
 			value={{
 				getRecords: [records, setRecords],
 				getTotalRecordCount: [totalRecordCount, setTotalRecordCount],
 				getRecordType: [recordType, setRecordType],
 				getAllowProcessing: [allowProcessing, setAllowProcessing],
-				getMappedRecordsString: [mappedRecordsString, setMappedRecordsString]
+				getMappedCsv: [mappedCsv, setMappedCsv],
+				getZeroMatchCsv: [zeroMatchCsv, setZeroMatchCsv],
+				getHasMatchCsv: [hasMatchCsv, setHasMatchCsv],
 			}}
 		>
 			{children}
-		</RecordsContext.Provider>
+		</ResultsContext.Provider>
 	);
 }
 
-RecordsContextProvider.propTypes = {
+ResultsContextProvider.propTypes = {
 	children: PropTypes.node,
 };
 
-export { RecordsContext, RecordsContextProvider }
+export { ResultsContext, ResultsContextProvider };

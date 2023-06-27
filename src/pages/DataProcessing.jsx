@@ -1,23 +1,29 @@
 import { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { RecordsContext } from '../contexts/RecordsContext.jsx';
+import { ResultsContext } from '../contexts/ResultsContext.jsx';
 import { ApiContext } from '../contexts/ApiContext.jsx';
 import {
 	mapFields,
-	compareRecords,
-	saveToDatabase,
+	matchRecords,
 } from '../api/dataProcessApi.js';
-import { downloadFile } from '../utils/fileUtils.js';
 
 import { Header } from '../components/Header.jsx';
 import { Spinner } from '../components/Spinner.jsx';
+import { ResultsList } from '../components/ResultsList.jsx';
 
 export function DataProcessing() {
-	const { getRecords, getRecordType, getMappedRecordsString } =
-		useContext(RecordsContext);
+	const {
+		getRecords,
+		getRecordType,
+		getMappedCsv,
+		getZeroMatchCsv,
+		getHasMatchCsv,
+	} = useContext(ResultsContext);
 	const [records] = getRecords;
 	const [recordType] = getRecordType;
-	const [mappedRecordsString, setMappedRecordsString] = getMappedRecordsString;
+	const [mappedCsv, setMappedCsv] = getMappedCsv;
+	const [zeroMatchCsv, setZeroMatchCsv] = getZeroMatchCsv;
+	const [hasMatchCsv, setHasMatchCsv] = getHasMatchCsv;
 	const { apiState } = useContext(ApiContext);
 
 	const [isProcessing, setIsProcessing] = useState(false);
@@ -26,34 +32,55 @@ export function DataProcessing() {
 	const [successMsg, setSuccessMsg] = useState('');
 	const [errorMsg, setErrorMsg] = useState('');
 
-	async function runFunction(callback) {
+	function initSettings() {
 		setIsProcessing(true);
 		setProcessingDone(false);
 		setIsError(false);
+	}
+
+	function handleResponse(response) {
+		setIsProcessing(false);
+		setIsError(false);
+		setProcessingDone(true);
+		setSuccessMsg(response.successMsg);
+		setTimeout(() => setProcessingDone(false), 5000);
+	}
+
+	function handleError(error) {
+		console.log(error);
+		setIsProcessing(false);
+		setIsError(true);
+		setErrorMsg(error.message);
+		console.error(error);
+	}
+
+	async function mapFieldFunction() {
+		initSettings();
 		const apiName = apiState.name.toLowerCase();
 
-		await callback(apiName, records)
+		await mapFields(apiName, records)
 			.then((response) => {
-				if (response.csvString) {
-					setMappedRecordsString(response.csvString);
-				}
-				setIsProcessing(false);
-				setIsError(false);
-				setProcessingDone(true);
-				setSuccessMsg(response.successMsg);
+				setMappedCsv({ csvString: response.mappedCsv, count: response.mappedCount })
+				handleResponse(response);
 			})
-			.catch((err) => {
-				setIsProcessing(false);
-				setIsError(true);
-				setErrorMsg(err.message);
-				console.error(err);
+			.catch((error) => {
+				handleError(error);
 			});
 	}
 
-	// Download processed records as CSV file
-	function downloadCsv() {
-		const csvData = new Blob([mappedRecordsString]);
-		downloadFile(csvData, `${apiState.name}-mapped.csv`);
+	async function matchRecordsFunction() {
+		initSettings();
+		const apiName = apiState.name.toLowerCase();
+
+		await matchRecords(apiName, mappedCsv?.csvString)
+			.then((response) => {
+				setZeroMatchCsv({ csvString: response.zeroMatchCsv, count: response.zeroMatchCount });
+				setHasMatchCsv({ csvString: response.hasMatchCsv, count: response.hasMatchCount });
+				handleResponse(response);
+			})
+			.catch((error) => {
+				handleError(error);
+			});
 	}
 
 	return (
@@ -66,6 +93,7 @@ export function DataProcessing() {
 				<p>
 					Fetched <b>{records.length}</b> results
 				</p>
+
 				<div className='msg-box'>
 					{!isProcessing && !isError && !processingDone && (
 						<span>Awaiting Process</span>
@@ -87,31 +115,19 @@ export function DataProcessing() {
 				<div className='btns'>
 					<button
 						disabled={isProcessing || recordType !== 'venues'}
-						onClick={() => runFunction(mapFields)}
+						onClick={mapFieldFunction}
 					>
 						Map Venue Fields
 					</button>
 					<button
 						disabled={isProcessing || recordType !== 'venues'}
-						onClick={downloadCsv}
+						onClick={matchRecordsFunction}
 					>
-						Download CSV
-					</button>
-					<button
-						disabled={isProcessing || recordType !== 'venues'}
-						onClick={() => compareRecords()}
-					>
-						Compare Venue Records
-					</button>
-					<button
-						disabled={isProcessing || recordType !== 'venues'}
-						onClick={() => saveToDatabase()}
-					>
-						Save To Database
+						Match Venue Records
 					</button>
 				</div>
 
-				{/* Manual comparison for mapped data */}
+				<ResultsList />
 			</main>
 		</>
 	);
