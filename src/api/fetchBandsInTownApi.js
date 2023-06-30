@@ -13,25 +13,22 @@ export async function fetchBandsInTown(endpoint, id, params) {
 		.get(`${url}${endpoint}`, { params: apiParams })
 		.then((response) => {
 			if (response.data === '') {
-				console.log('empty');
 				return {
 					totalHits: 0,
-					records: [],
+					totalRecords: [],
 				};
 			}
 
 			return {
 				totalHits: Array.isArray(response.data) ? response.data.length : 1,
-				records: Array.isArray(response.data) ? response.data : [response.data],
+				totalRecords: Array.isArray(response.data) ? response.data : [response.data],
 			};
 		})
 		.catch((error) => {
-			let errorMsg = '';
-			if (error.response) {
-				errorMsg = error.response.data.error;
+			if (error.response?.data?.error) {
+				throw new Error(error.response.data.error);
 			} else {
-				errorMsg = error.message;
+				throw new Error(error.message);
 			}
-			return { error: errorMsg };
 		});
 }

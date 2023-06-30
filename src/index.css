@@ -51,7 +51,16 @@ h1 {
 	line-height: 1.1;
 }
 
-button {
+.file-import-btn {
+	position: absolute;
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+}
+
+button,
+.file-import-btn + .file-import-label {
 	border-radius: 8px;
 	border: 1px solid rgba(255, 255, 255, 0.3);
 	padding: 0.6em 1.2em;
@@ -63,11 +72,14 @@ button {
 	cursor: pointer;
 	transition: border-color 0.25s;
 }
-button:hover {
+button:hover,
+.file-import-btn + .file-import-label:hover {
 	border-color: #646cff;
 }
 button:focus,
-button:focus-visible {
+button:focus-visible,
+.file-import-btn:focus + .file-import-label,
+.file-import-btn:focus-visible + .file-import-label {
 	outline: 4px auto -webkit-focus-ring-color;
 }
 
@@ -82,7 +94,8 @@ button:focus-visible {
 	a:hover {
 		color: #747bff;
 	}
-	button {
+	button,
+	.file-import-btn + .file-import-label {
 		border: 1px solid rgba(50, 50, 50, 0.3);
 		color: var(--text-color-theme);
 		background-color: var(--bg-color-theme);

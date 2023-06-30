@@ -1,13 +1,28 @@
-import PropTypes from 'prop-types';
-
-import '../styles/resultsList.css';
 import { useContext } from 'react';
-import { ApiContext } from '../contexts/ApiContext';
+import PropTypes from 'prop-types';
+import { useImportInputJson, useImportMappedCsv } from '../hooks/UseImportData';
 import { downloadFile } from '../utils/fileUtils';
+
+import { ApiContext } from '../contexts/ApiContext';
 import { ResultsContext } from '../contexts/ResultsContext';
 
+import '../styles/resultsList.css';
+
 function ResultBox({ resultInfo }) {
-	const { name, data, count, filename, resetFunc } = resultInfo;
+	const { name, data, count, filename, importFunc, resetFunc } = resultInfo;
+
+	async function importData(e) {
+		const importFile = e.target.files[0];
+		if (importFile) {
+			await importFunc(importFile)
+				.then((response) => {
+					
+				})
+				.catch((error) => {
+					
+				});
+		}
+	}
 
 	function downloadResults() {
 		const filetype = filename.split('.').pop();
@@ -27,7 +42,20 @@ function ResultBox({ resultInfo }) {
 				<h3>{name}</h3>
 				<span>{count === 0 ? 'No Data Available' : `${count} Results`}</span>
 			</div>
-			<div className='download-btn'>
+			<div className='action-btns'>
+				<input
+					type='file'
+					name={`${name}-file-data-import`}
+					id={`${name}-file-data-import`}
+					className='file-import-btn'
+					onChange={importData}
+				/>
+				<label
+					htmlFor={`${name}-file-data-import`}
+					className='file-import-label'
+				>
+					Import
+				</label>
 				<button
 					className={count === 0 ? 'disabled' : ''}
 					disabled={count === 0}
@@ -74,6 +102,7 @@ export function ResultsList() {
 			data: records,
 			count: totalRecordCount,
 			filename: `${apiState.name}-${recordType}.json`,
+			importFunc: useImportInputJson(),
 			resetFunc: () => {
 				setRecords('');
 				setTotalRecordCount(0);
@@ -84,6 +113,7 @@ export function ResultsList() {
 			data: mappedCsv.csvString,
 			count: mappedCsv.count,
 			filename: `${apiState.name}-mapped.csv`,
+			importFunc: useImportMappedCsv(),
 			resetFunc: () => setMappedCsv({ csvString: '', count: 0 }),
 		},
 		{

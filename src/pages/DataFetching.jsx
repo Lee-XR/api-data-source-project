@@ -70,19 +70,6 @@ export function DataFetching() {
 		}
 	}
 
-	// Download records as JSON file
-	function downloadJson() {
-		if (records.length > 0) {
-			const filetype = 'json';
-			const filename = `${apiState.name}-${recordType}.json`;
-			downloadFile(records, filename, filetype);
-		} else {
-			setIsFetching(false);
-			setIsError(true);
-			setErrorMsg('No records available to download.');
-		}
-	}
-
 	return (
 		<>
 			{/* Header with API selection */}
@@ -129,13 +116,13 @@ export function DataFetching() {
 					>
 						Fetch Data
 					</button>
-					<button
+					{/* <button
 						className={isFetching ? 'disabled' : ''}
 						onClick={downloadJson}
 						disabled={isFetching}
 					>
 						Download JSON
-					</button>
+					</button> */}
 					<button
 						className={isFetching ? 'disabled' : ''}
 						onClick={resetOptions}
@@ -151,9 +138,9 @@ export function DataFetching() {
 						Reset Results
 					</button>
 					<button
-						className={!allowProcessing ? 'disabled' : ''}
+						// className={!allowProcessing ? 'disabled' : ''}
 						onClick={() => navigate('data-processing')}
-						disabled={!allowProcessing}
+						// disabled={!allowProcessing}
 					>
 						Process Data
 					</button>

@@ -9,7 +9,7 @@ function ResultsContextProvider({ children }) {
 	const [mappedCsv, setMappedCsv] = useState({ csvString: '', count: 0 });
 	const [zeroMatchCsv, setZeroMatchCsv] = useState({ csvString: '', count: 0 });
 	const [hasMatchCsv, setHasMatchCsv] = useState({ csvString: '', count: 0 });
-	const [recordType, setRecordType] = useState('venues');
+	const [recordType, setRecordType] = useState('');
 	const [allowProcessing, setAllowProcessing] = useState(false);
 
 	useEffect(() => {

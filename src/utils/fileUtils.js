@@ -26,4 +26,24 @@ function downloadFile(filedata, filename, filetype) {
 	window.URL.revokeObjectURL(url);
 }
 
-export { downloadFile };
+function getFileExtension(file) {
+	return file.name.split(".").pop();
+}
+
+function checkFileType(file, type) {
+	const extension = getFileExtension(file);
+	const fileType = file.type;
+
+	switch(type) {
+		case 'json':
+			return (extension === 'json' && fileType === 'application/json');
+
+		case 'csv':
+			return (extension === 'csv' && fileType === 'text/csv');
+
+		default:
+			return false;
+	}
+}
+
+export { downloadFile, getFileExtension, checkFileType };

@@ -114,13 +114,15 @@ export function DataProcessing() {
 
 				<div className='btns'>
 					<button
-						disabled={isProcessing || recordType !== 'venues'}
+						className={isProcessing ? 'disabled' : ''}
+						disabled={isProcessing}
 						onClick={mapFieldFunction}
 					>
 						Map Venue Fields
 					</button>
 					<button
-						disabled={isProcessing || recordType !== 'venues'}
+						className={isProcessing ? 'disabled' : ''}
+						disabled={isProcessing}
 						onClick={matchRecordsFunction}
 					>
 						Match Venue Records
