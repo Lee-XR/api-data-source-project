@@ -1,5 +1,7 @@
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useState } from 'react';
 import PropTypes from 'prop-types';
+
+
 
 const ResultsContext = createContext(null);
 
@@ -10,15 +12,6 @@ function ResultsContextProvider({ children }) {
 	const [zeroMatchCsv, setZeroMatchCsv] = useState({ csvString: '', count: 0 });
 	const [hasMatchCsv, setHasMatchCsv] = useState({ csvString: '', count: 0 });
 	const [recordType, setRecordType] = useState('');
-	const [allowProcessing, setAllowProcessing] = useState(false);
-
-	useEffect(() => {
-		if (records.length > 0) {
-			setAllowProcessing(true);
-		} else {
-			setAllowProcessing(false);
-		}
-	}, [records]);
 
 	return (
 		<ResultsContext.Provider
@@ -26,7 +19,6 @@ function ResultsContextProvider({ children }) {
 				getRecords: [records, setRecords],
 				getTotalRecordCount: [totalRecordCount, setTotalRecordCount],
 				getRecordType: [recordType, setRecordType],
-				getAllowProcessing: [allowProcessing, setAllowProcessing],
 				getMappedCsv: [mappedCsv, setMappedCsv],
 				getZeroMatchCsv: [zeroMatchCsv, setZeroMatchCsv],
 				getHasMatchCsv: [hasMatchCsv, setHasMatchCsv],

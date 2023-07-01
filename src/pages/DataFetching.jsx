@@ -1,39 +1,39 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { downloadFile } from '../utils/fileUtils.js';
 import { ApiContext } from '../contexts/ApiContext.jsx';
 import { ResultsContext } from '../contexts/ResultsContext.jsx';
+import { FunctionResponseContext } from '../contexts/FunctionResponseContext.jsx';
 
 import { Header } from '../components/Header.jsx';
 import { ApiSelection } from '../components/ApiSelection.jsx';
 import { Spinner } from '../components/Spinner.jsx';
 
 export function DataFetching() {
-	const { getRecords, getTotalRecordCount, getRecordType, getAllowProcessing } =
+	const { getRecords, getTotalRecordCount, getRecordType } =
 		useContext(ResultsContext);
 	const [records, setRecords] = getRecords;
 	const [totalRecordCount, setTotalRecordCount] = getTotalRecordCount;
 	const [recordType, setRecordType] = getRecordType;
-	const [allowProcessing] = getAllowProcessing;
 	const { apiState } = useContext(ApiContext);
+	const [{ isRunning, isError, errorMsg }, responseDispatch] = useContext(
+		FunctionResponseContext
+	);
 
 	const [apiEndpoint, setApiEndpoint] = useState('');
 	const [apiSingleId, setApiSingleId] = useState(null);
 	const [apiParams, setApiParams] = useState('');
 	const [resetApi, setResetApi] = useState(null);
-
-	const [isFetching, setIsFetching] = useState(false);
-	const [isError, setIsError] = useState(false);
-	const [errorMsg, setErrorMsg] = useState('');
 	const navigate = useNavigate();
+	const timeout = useRef(null);
 
 	// Return selected API component
 	const ApiComponent = apiState.component;
 
-	// Fetch data from API
 	async function fetchData() {
-		setIsFetching(true);
-		setIsError(false);
+		if (timeout.current) {
+			clearTimeout(timeout.current);
+		}
+		responseDispatch({ type: 'START_FUNCTION' });
 
 		await apiState
 			.fetchFunc(apiEndpoint, apiSingleId, apiParams)
@@ -41,17 +41,16 @@ export function DataFetching() {
 				setTotalRecordCount(parseInt(totalHits));
 				setRecords([...records, ...totalRecords]);
 				setRecordType(apiEndpoint);
-				setIsFetching(false);
+				responseDispatch({ type: 'HANDLE_RESPONSE', successMsg: '' });
+				timeout.current = setTimeout(() => responseDispatch({ type: 'RESET_RESPONSE' }), 5000);
 			})
-			.catch((err) => {
-				setIsFetching(false);
-				setIsError(true);
-				setErrorMsg(err.message);
-				console.error(err.message);
+			.catch((error) => {
+				console.error(error);
+				responseDispatch({ type: 'HANDLE_ERROR', errorMsg: error.message });
+				timeout.current = setTimeout(() => responseDispatch({ type: 'RESET_RESPONSE' }), 5000);
 			});
 	}
 
-	// Reset API options
 	function resetOptions() {
 		const reset = confirm('Are you sure to reset all options?');
 		if (reset === true) {
@@ -59,20 +58,24 @@ export function DataFetching() {
 		}
 	}
 
-	// Reset records
 	function resetRecords() {
 		const reset = confirm('Are you sure to reset all records?');
 		if (reset === true) {
 			setTotalRecordCount(0);
 			setRecords([]);
-			setIsFetching(false);
-			setIsError(false);
 		}
 	}
 
+	useEffect(() => {
+		responseDispatch({ type: 'RESET_RESPONSE' });
+
+		return () => {
+			clearTimeout(timeout.current);
+		}
+	}, []);
+
 	return (
 		<>
-			{/* Header with API selection */}
 			<Header>
 				<ApiSelection />
 			</Header>
@@ -89,58 +92,50 @@ export function DataFetching() {
 					</b>
 				</p>
 
-				{/* Fetching, error & total results message */}
 				<div className='msg-box'>
-					{isFetching && !isError && (
+					{isRunning && !isError && (
 						<>
 							<span>Fetching...</span>
 							<Spinner />
 						</>
 					)}
-					{!isFetching && !isError && (
+					{!isRunning && !isError && (
 						<span>
 							Returned <b>{records.length}</b> of <b>{totalRecordCount}</b>{' '}
 							results
 						</span>
 					)}
-					{!isFetching && isError && (
+					{!isRunning && isError && (
 						<span className='error-msg'>{errorMsg}</span>
 					)}
 				</div>
 
 				<div className='btns'>
 					<button
-						className={isFetching ? 'disabled' : ''}
+						className={isRunning ? 'disabled' : ''}
 						onClick={fetchData}
-						disabled={isFetching}
+						disabled={isRunning}
 					>
 						Fetch Data
 					</button>
-					{/* <button
-						className={isFetching ? 'disabled' : ''}
-						onClick={downloadJson}
-						disabled={isFetching}
-					>
-						Download JSON
-					</button> */}
 					<button
-						className={isFetching ? 'disabled' : ''}
+						className={isRunning ? 'disabled' : ''}
 						onClick={resetOptions}
-						disabled={isFetching}
+						disabled={isRunning}
 					>
 						Reset Options
 					</button>
 					<button
-						className={isFetching ? 'disabled' : ''}
+						className={isRunning ? 'disabled' : ''}
 						onClick={resetRecords}
-						disabled={isFetching}
+						disabled={isRunning}
 					>
 						Reset Results
 					</button>
 					<button
-						// className={!allowProcessing ? 'disabled' : ''}
+						className={isRunning ? 'disabled' : ''}
 						onClick={() => navigate('data-processing')}
-						// disabled={!allowProcessing}
+						disabled={isRunning}
 					>
 						Process Data
 					</button>
