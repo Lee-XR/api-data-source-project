@@ -1,25 +1,30 @@
-import { useContext } from 'react';
+import { memo, useContext } from 'react';
 import PropTypes from 'prop-types';
-import { useImportInputJson, useImportMappedCsv } from '../hooks/UseImportData';
+import { useImportInputJson, useImportMappedCsv, useImportZeroMatchCsv, useImportHasMatchCsv } from '../hooks/UseImportData';
 import { downloadFile } from '../utils/fileUtils';
 
 import { ApiContext } from '../contexts/ApiContext';
 import { ResultsContext } from '../contexts/ResultsContext';
+import { FunctionResponseContext } from '../contexts/FunctionResponseContext';
 
 import '../styles/resultsList.css';
 
 function ResultBox({ resultInfo }) {
 	const { name, data, count, filename, importFunc, resetFunc } = resultInfo;
+	const { responseDispatch, responseTimeout } = useContext(FunctionResponseContext);
 
 	async function importData(e) {
 		const importFile = e.target.files[0];
 		if (importFile) {
 			await importFunc(importFile)
 				.then((response) => {
-					
+					responseDispatch({type: 'HANDLE_RESPONSE', successMsg: response.successMsg});
+					responseTimeout.current = setTimeout(() => responseDispatch({type: 'RESE'}), 5000);
 				})
 				.catch((error) => {
-					
+					console.error(error);
+					responseDispatch({type: 'HANDLE_ERROR', errorMsg: error.message});
+					responseTimeout.current = setTimeout(() => responseDispatch({type: 'RESET_RESPONSE'}), 5000);
 				});
 		}
 	}
@@ -79,34 +84,19 @@ ResultBox.propTypes = {
 	resultInfo: PropTypes.object,
 };
 
-export function ResultsList() {
+export const ResultsList = memo(function ResultsList() {
 	const { apiState } = useContext(ApiContext);
-	const {
-		getRecords,
-		getTotalRecordCount,
-		getRecordType,
-		getMappedCsv,
-		getZeroMatchCsv,
-		getHasMatchCsv,
-	} = useContext(ResultsContext);
-	const [records, setRecords] = getRecords;
-	const [totalRecordCount, setTotalRecordCount] = getTotalRecordCount;
-	const [recordType] = getRecordType;
-	const [mappedCsv, setMappedCsv] = getMappedCsv;
-	const [zeroMatchCsv, setZeroMatchCsv] = getZeroMatchCsv;
-	const [hasMatchCsv, setHasMatchCsv] = getHasMatchCsv;
+	const { resultsState, resultsDispatch } = useContext(ResultsContext);
+	const { inputRecordsJson, mappedCsv, zeroMatchCsv, hasMatchCsv } = resultsState;
 
 	const resultBoxInfo = [
 		{
 			name: `${apiState.name} API Data JSON`,
-			data: records,
-			count: totalRecordCount,
-			filename: `${apiState.name}-${recordType}.json`,
+			data: inputRecordsJson.data,
+			count: inputRecordsJson.count,
+			filename: `${apiState.name}-input-records.json`,
 			importFunc: useImportInputJson(),
-			resetFunc: () => {
-				setRecords('');
-				setTotalRecordCount(0);
-			},
+			resetFunc: () => resultsDispatch({ type: 'RESET', resultType: 'inputRecordsJson' }),
 		},
 		{
 			name: 'Field-Mapped Records CSV',
@@ -114,21 +104,23 @@ export function ResultsList() {
 			count: mappedCsv.count,
 			filename: `${apiState.name}-mapped.csv`,
 			importFunc: useImportMappedCsv(),
-			resetFunc: () => setMappedCsv({ csvString: '', count: 0 }),
+			resetFunc: () => resultsDispatch({ type: 'RESET', resultType: 'mappedCsv' }),
 		},
 		{
 			name: 'Zero-Match Records CSV',
 			data: zeroMatchCsv.csvString,
 			count: zeroMatchCsv.count,
 			filename: `${apiState.name}-zero-match.csv`,
-			resetFunc: () => setZeroMatchCsv({ csvString: '', count: 0 }),
+			importFunc: useImportZeroMatchCsv(),
+			resetFunc: () => resultsDispatch({ type: 'RESET', resultType: 'zeroMatchCsv' }),
 		},
 		{
 			name: 'Has-Match Records CSV',
 			data: hasMatchCsv.csvString,
 			count: hasMatchCsv.count,
 			filename: `${apiState.name}-has-match.csv`,
-			resetFunc: () => setHasMatchCsv({ csvString: '', count: 0 }),
+			importFunc: useImportHasMatchCsv(),
+			resetFunc: () => resultsDispatch({ type: 'RESET', resultType: 'hasMatchCsv' }),
 		},
 	];
 
@@ -142,4 +134,4 @@ export function ResultsList() {
 			))}
 		</div>
 	);
-}
+});

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ResultsContext } from '../contexts/ResultsContext.jsx';
 import { ApiContext } from '../contexts/ApiContext.jsx';
@@ -10,77 +10,82 @@ import { Spinner } from '../components/Spinner.jsx';
 import { ResultsList } from '../components/ResultsList.jsx';
 
 export function DataProcessing() {
-	const {
-		getRecords,
-		getRecordType,
-		getMappedCsv,
-		getZeroMatchCsv,
-		getHasMatchCsv,
-	} = useContext(ResultsContext);
-	const [records] = getRecords;
-	const [recordType] = getRecordType;
-	const [mappedCsv, setMappedCsv] = getMappedCsv;
-	const [zeroMatchCsv, setZeroMatchCsv] = getZeroMatchCsv;
-	const [hasMatchCsv, setHasMatchCsv] = getHasMatchCsv;
 	const { apiState } = useContext(ApiContext);
-	const [
-		{ isRunning, isError, isDone, successMsg, errorMsg },
-		responseDispatch,
-	] = useContext(FunctionResponseContext);
-	const timeout = useRef(null);
+	const { resultsState, resultsDispatch } = useContext(ResultsContext);
+	const { inputRecordsJson, mappedCsv } = resultsState;
+	const { responseState, responseDispatch, responseTimeout} = useContext(FunctionResponseContext);
+	const { isRunning, isError, isDone, successMsg, errorMsg } = responseState;
 
 	async function mapFieldFunction() {
-		if (timeout.current) {
-			clearTimeout(timeout.current);
+		if (responseTimeout.current) {
+			clearTimeout(responseTimeout.current);
 		}
 		responseDispatch({ type: 'START_FUNCTION' });
 		const apiName = apiState.name.toLowerCase();
 
-		await mapFields(apiName, records)
-			.then((response) => {
-				setMappedCsv({
-					csvString: response.mappedCsv,
-					count: response.mappedCount,
+		await mapFields(apiName, inputRecordsJson.data)
+			.then(({ mappedCsv, mappedCount, successMsg }) => {
+				resultsDispatch({
+					type: 'UPDATE',
+					resultType: 'mappedCsv',
+					data: mappedCsv,
+					count: mappedCount,
 				});
 				responseDispatch({
 					type: 'HANDLE_RESPONSE',
-					successMsg: response.successMsg,
+					successMsg: successMsg,
 				});
-				timeout.current = setTimeout(() => responseDispatch({ type: 'RESET_RESPONSE' }), 5000);
+				responseTimeout.current = setTimeout(
+					() => responseDispatch({ type: 'RESET_RESPONSE' }),
+					5000
+				);
 			})
 			.catch((error) => {
 				console.error(error);
 				responseDispatch({ type: 'HANDLE_ERROR', errorMsg: error.message });
-				timeout.current = setTimeout(() => responseDispatch({ type: 'RESET_RESPONSE' }), 5000);
+				responseTimeout.current = setTimeout(
+					() => responseDispatch({ type: 'RESET_RESPONSE' }),
+					5000
+				);
 			});
 	}
 
 	async function matchRecordsFunction() {
-		if (timeout.current) {
-			clearTimeout(timeout.current);
+		if (responseTimeout.current) {
+			clearTimeout(responseTimeout.current);
 		}
 		responseDispatch({ type: 'START_FUNCTION' });
 		const apiName = apiState.name.toLowerCase();
 
-		await matchRecords(apiName, mappedCsv?.csvString)
-			.then((response) => {
-				setZeroMatchCsv({
-					csvString: response.zeroMatchCsv,
-					count: response.zeroMatchCount,
+		await matchRecords(apiName, mappedCsv.data)
+			.then(({ zeroMatchCsv, zeroMatchCount, hasMatchCsv, hasMatchCount, successMsg }) => {
+				resultsDispatch({
+					type: 'UPDATE',
+					resultType: 'zeroMatchCsv',
+					data: zeroMatchCsv,
+					count: zeroMatchCount
 				});
-				setHasMatchCsv({
-					csvString: response.hasMatchCsv,
-					count: response.hasMatchCount,
+				resultsDispatch({
+					type: 'UPDATE',
+					resultType: 'hasMatchCsv',
+					data: hasMatchCsv,
+					count: hasMatchCount
 				});
 				responseDispatch({
 					type: 'HANDLE_RESPONSE',
-					successMsg: response.successMsg,
+					successMsg: successMsg,
 				});
-				timeout.current = setTimeout(() => responseDispatch({ type: 'RESET_RESPONSE' }), 5000);
+				responseTimeout.current = setTimeout(
+					() => responseDispatch({ type: 'RESET_RESPONSE' }),
+					5000
+				);
 			})
 			.catch((error) => {
 				responseDispatch({ type: 'HANDLE_ERROR', errorMsg: error.message });
-				timeout.current = setTimeout(() => responseDispatch({ type: 'RESET_RESPONSE' }), 5000);
+				responseTimeout.current = setTimeout(
+					() => responseDispatch({ type: 'RESET_RESPONSE' }),
+					5000
+				);
 			});
 	}
 
@@ -88,8 +93,8 @@ export function DataProcessing() {
 		responseDispatch({ type: 'RESET_RESPONSE' });
 
 		return () => {
-			clearTimeout(timeout.current);
-		}
+			clearTimeout(responseTimeout.current);
+		};
 	}, []);
 
 	return (
@@ -97,17 +102,15 @@ export function DataProcessing() {
 			<Header>
 				<Link to='/'>Back</Link>
 			</Header>
-			
+
 			<main>
 				<h2>{apiState.name} API Data Processing</h2>
 				<p>
-					Fetched <b>{records.length}</b> results
+					Fetched <b>{inputRecordsJson.data.length}</b> results
 				</p>
 
 				<div className='msg-box'>
-					{!isRunning && !isError && !isDone && (
-						<span>Awaiting Process</span>
-					)}
+					{!isRunning && !isError && !isDone && <span>Awaiting Process</span>}
 					{!isRunning && !isError && isDone && (
 						<span>Processing Done... {successMsg}</span>
 					)}

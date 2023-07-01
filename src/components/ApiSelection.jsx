@@ -1,9 +1,9 @@
-import { useContext, useState } from 'react';
+import { memo, useContext, useState } from 'react';
 import { ApiContext } from '../contexts/ApiContext';
 
 import '../styles/header.css';
 
-export function ApiSelection() {
+export const ApiSelection = memo(function ApiSelection() {
 	const { apiArray, apiState, apiDispatch } = useContext(ApiContext);
 	const [selectedNum, setSelectedNum] = useState(apiArray.indexOf(apiState.name));
 
@@ -24,4 +24,4 @@ export function ApiSelection() {
 			))}
 		</ul>
 	);
-}
+});

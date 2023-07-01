@@ -4,46 +4,51 @@ import { ResultsContext } from '../contexts/ResultsContext';
 import { getCsvRowCount } from '../utils/stringUtils';
 
 function useImportInputJson() {
-	const { getRecords, getTotalRecordCount } = useContext(ResultsContext);
-	const [records, setRecords] = getRecords;
-	const [totalRecordCount, setTotalRecordCount] = getTotalRecordCount;
+	const { resultsDispatch } = useContext(ResultsContext);
 
 	return async (jsonFile) => {
-        const validFileType = 'json';
-        const isValid = checkFileType(jsonFile, validFileType);
-        if (!isValid) {
-            throw new Error('File cannot be imported. Must be .json file only.');
-        }
+		const validFileType = 'json';
+		const isValid = checkFileType(jsonFile, validFileType);
+		if (!isValid) {
+			throw new Error('File cannot be imported. Must be .json file only.');
+		}
 
-        await jsonFile.text()
-            .then((result) => {
-                const parsedResult = JSON.parse(result);
-                setRecords(parsedResult);
-                setTotalRecordCount(parsedResult.length);
-            })
-            .catch((error) => {
-                throw error;
-            })
+		await jsonFile
+			.text()
+			.then((result) => {
+				const parsedResult = JSON.parse(result);
+				resultsDispatch({
+					type: 'UPDATE',
+					resultType: 'inputRecordsJson',
+					data: parsedResult,
+					count: parsedResult.length,
+				});
+			})
+			.catch((error) => {
+				throw error;
+			});
 
-		return {successMsg: `${jsonFile.name} successfully imported.`};
+		return { successMsg: `${jsonFile.name} successfully imported.` };
 	};
 }
 
 function useImportMappedCsv() {
-	const { getMappedCsv } = useContext(ResultsContext);
-	const [mappedCsv, setMappedCsv] = getMappedCsv;
+	const { resultsDispatch } = useContext(ResultsContext);
 
 	return async (csvFile) => {
-        const validFileType = 'csv';
-        const isValid = checkFileType(csvFile, validFileType);
-        if (!isValid) {
-            throw new Error('File cannot be imported. Must be .json file only.');
-        }
+		const validFileType = 'csv';
+		const isValid = checkFileType(csvFile, validFileType);
+		if (!isValid) {
+			throw new Error('File cannot be imported. Must be .json file only.');
+		}
 
-		await csvFile.text()
+		await csvFile
+			.text()
 			.then((result) => {
-				setMappedCsv({
-					csvString: result,
+				resultsDispatch({
+					type: 'UPDATE',
+					resultType: 'mappedCsv',
+					data: result,
 					count: getCsvRowCount(result),
 				});
 			})
@@ -51,60 +56,64 @@ function useImportMappedCsv() {
 				throw error;
 			});
 
-		return {successMsg: `${csvFile.name} successfully imported.`};
+		return { successMsg: `${csvFile.name} successfully imported.` };
 	};
 }
 
 function useImportZeroMatchCsv() {
-    const { getZeroMatchCsv } = useContext(ResultsContext);
-    const [zeroMatchCsv, setZeroMatchCsv] = getZeroMatchCsv;
+	const { resultsDispatch } = useContext(ResultsContext);
 
-    return async (csvFile) => {
-        const validFileType = 'csv';
-        const isValid = checkFileType(csvFile, validFileType);
-        if (!isValid) {
-            throw new Error('File cannot be imported. Must be .csv file only.');
-        }
+	return async (csvFile) => {
+		const validFileType = 'csv';
+		const isValid = checkFileType(csvFile, validFileType);
+		if (!isValid) {
+			throw new Error('File cannot be imported. Must be .csv file only.');
+		}
 
-        await csvFile.text()
-            .then((result) => {
-                setZeroMatchCsv({
-                    csvString: result,
-                    count: getCsvRowCount(result)
-                });
-            })
-            .catch((error) => {
-                throw error;
-            });
+		await csvFile
+			.text()
+			.then((result) => {
+				resultsDispatch({
+					type: 'UPDATE',
+					resultType: 'zeroMatchCsv',
+					data: result,
+					count: getCsvRowCount(result),
+				});
+			})
+			.catch((error) => {
+				throw error;
+			});
 
-        return {successMsg: `${csvFile.name} sucessfully imported.`};
-    }
+		return { successMsg: `${csvFile.name} sucessfully imported.` };
+	};
 }
 
 function useImportHasMatchCsv() {
-    const { getHasMatchCsv } = useContext(ResultsContext);
-    const [hasMatchCsv, setHasMatchCsv] = getHasMatchCsv;
+	const { resultsDispatch } = useContext(ResultsContext);
 
-    return async (csvFile) => {
-        const validFileType = 'csv';
-        const isValid = checkFileType(csvFile, validFileType);
-        if (!isValid) {
-            throw new Error('File cannot be imported. Must be .csv file only.');
-        }
+	return async (csvFile) => {
+		const validFileType = 'csv';
+		const isValid = checkFileType(csvFile, validFileType);
+		if (!isValid) {
+			throw new Error('File cannot be imported. Must be .csv file only.');
+		}
 
-        await csvFile.text()
-            .then((result) => {
-                setHasMatchCsv({
-                    csvString: result,
+		await csvFile
+			.text()
+			.then((result) => {
+                resultsDispatch({
+                    type: 'UPDATE',
+                    resultType: 'hasMatchCsv',
+                    data: result,
                     count: getCsvRowCount(result)
                 });
-            })
-            .catch((error) => {
-                throw error;
-            });
+			})
+			.catch((error) => {
+				throw error;
+			});
 
-        return {successMsg: `${csvFile.name} sucessfully imported.`};
-    }
+		return { successMsg: `${csvFile.name} sucessfully imported.` };
+	};
 }
 
 export {

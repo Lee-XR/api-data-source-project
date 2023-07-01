@@ -1,4 +1,4 @@
-import { createContext, useReducer } from "react";
+import { createContext, useReducer, useRef } from "react";
 import PropTypes from 'prop-types';
 
 const responseInitState = {
@@ -47,9 +47,10 @@ const FunctionResponseContext = createContext(responseInitState);
 
 function FunctionResponseContextProvider({ children }) {
     const [responseState, responseDispatch] = useReducer(responseReducer, responseInitState);
+    const responseTimeout = useRef(null);
 
     return (
-            <FunctionResponseContext.Provider value={[responseState, responseDispatch]}>
+            <FunctionResponseContext.Provider value={{responseState, responseDispatch, responseTimeout}}>
             {children}
         </FunctionResponseContext.Provider>
     )

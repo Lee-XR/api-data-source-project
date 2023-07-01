@@ -1,29 +1,128 @@
-import { createContext, useState } from 'react';
+import { createContext, useReducer } from 'react';
 import PropTypes from 'prop-types';
 
+const resultsInitState = {
+	inputRecordsJson: {
+		data: [],
+		count: 0,
+	},
+	mappedCsv: {
+		data: '',
+		count: 0,
+	},
+	zeroMatchCsv: {
+		data: '',
+		count: 0,
+	},
+	hasMatchCsv: {
+		data: '',
+		count: 0,
+	},
+};
 
+function resultsReducer(state, action) {
+	switch (action.type) {
+		case 'RESET': {
+			switch (action.resultType) {
+				case 'inputRecordsJson':
+					return {
+						...state,
+						inputRecordsJson: {
+							data: [],
+							count: 0,
+						},
+					};
 
-const ResultsContext = createContext(null);
+				case 'mappedCsv':
+					return {
+						...state,
+						mappedCsv: {
+							data: '',
+							count: 0,
+						},
+					};
+
+				case 'zeroMatchCsv':
+					return {
+						...state,
+						zeroMatchCsv: {
+							data: '',
+							count: 0,
+						},
+					};
+
+				case 'hasMatchCsv':
+					return {
+						...state,
+						hasMatchCsv: {
+							data: '',
+							count: 0,
+						},
+					};
+
+				default:
+					return state;
+			}
+		}
+
+		case 'UPDATE': {
+			switch (action.resultType) {
+				case 'inputRecordsJson':
+					return {
+						...state,
+						inputRecordsJson: {
+							data: action.data,
+							count: action.count,
+						},
+					};
+
+				case 'mappedCsv':
+					return {
+						...state,
+						mappedCsv: {
+							data: action.data,
+							count: action.count,
+						},
+					};
+
+				case 'zeroMatchCsv':
+					return {
+						...state,
+						zeroMatchCsv: {
+							data: action.data,
+							count: action.count,
+						},
+					};
+
+				case 'hasMatchCsv':
+					return {
+						...state,
+						hasMatchCsv: {
+							data: action.data,
+							count: action.count,
+						},
+					};
+
+				default:
+					return state;
+			}
+		}
+
+		default:
+			return state;
+	}
+}
+
+const ResultsContext = createContext(resultsInitState);
 
 function ResultsContextProvider({ children }) {
-	const [records, setRecords] = useState([]);
-	const [totalRecordCount, setTotalRecordCount] = useState(records.length);
-	const [mappedCsv, setMappedCsv] = useState({ csvString: '', count: 0 });
-	const [zeroMatchCsv, setZeroMatchCsv] = useState({ csvString: '', count: 0 });
-	const [hasMatchCsv, setHasMatchCsv] = useState({ csvString: '', count: 0 });
-	const [recordType, setRecordType] = useState('');
+	const [resultsState, resultsDispatch] = useReducer(
+		resultsReducer,
+		resultsInitState
+	);
 
 	return (
-		<ResultsContext.Provider
-			value={{
-				getRecords: [records, setRecords],
-				getTotalRecordCount: [totalRecordCount, setTotalRecordCount],
-				getRecordType: [recordType, setRecordType],
-				getMappedCsv: [mappedCsv, setMappedCsv],
-				getZeroMatchCsv: [zeroMatchCsv, setZeroMatchCsv],
-				getHasMatchCsv: [hasMatchCsv, setHasMatchCsv],
-			}}
-		>
+		<ResultsContext.Provider value={{resultsState, resultsDispatch}}>
 			{children}
 		</ResultsContext.Provider>
 	);
