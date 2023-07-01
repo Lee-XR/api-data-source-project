@@ -28,6 +28,7 @@ export function DataFetching() {
 	async function fetchData() {
 		if (responseTimeout.current) {
 			clearTimeout(responseTimeout.current);
+			responseTimeout.current = null;
 		}
 		responseDispatch({ type: 'START_FUNCTION' });
 
@@ -75,6 +76,7 @@ export function DataFetching() {
 
 		return () => {
 			clearTimeout(responseTimeout.current);
+			responseTimeout.current = null;
 		};
 	}, []);
 

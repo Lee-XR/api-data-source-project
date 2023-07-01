@@ -9,6 +9,7 @@ function getCsvRowCount(csvString) {
     for (let row = 0; row < rowArray.length; row++) {
         if (rowArray[row] === "" || rowArray[row] === null) {
             rowArray.splice(row, 1);
+            row--;
         }
     }
 

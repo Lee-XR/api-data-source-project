@@ -26,6 +26,11 @@ function ResultBox({ resultInfo }) {
 					responseDispatch({type: 'HANDLE_ERROR', errorMsg: error.message});
 					responseTimeout.current = setTimeout(() => responseDispatch({type: 'RESET_RESPONSE'}), 5000);
 				});
+
+			e.target.value = '';
+		} else {
+			responseDispatch({type: 'HANDLE_ERROR', errorMsg: 'Import file not found.'});
+			responseTimeout.current = setTimeout(() => responseDispatch({type: 'RESET_RESPONSE'}), 5000);
 		}
 	}
 
@@ -52,12 +57,12 @@ function ResultBox({ resultInfo }) {
 					type='file'
 					name={`${name}-file-data-import`}
 					id={`${name}-file-data-import`}
-					className='file-import-btn'
+					className='file-input-btn'
 					onChange={importData}
 				/>
 				<label
 					htmlFor={`${name}-file-data-import`}
-					className='file-import-label'
+					className='file-input-label'
 				>
 					Import
 				</label>

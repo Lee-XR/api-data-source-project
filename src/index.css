@@ -51,7 +51,7 @@ h1 {
 	line-height: 1.1;
 }
 
-.file-import-btn {
+.file-input-btn {
 	position: absolute;
 	width: 0.1px;
 	height: 0.1px;
@@ -60,7 +60,7 @@ h1 {
 }
 
 button,
-.file-import-btn + .file-import-label {
+.file-input-btn + .file-input-label {
 	border-radius: 8px;
 	border: 1px solid rgba(255, 255, 255, 0.3);
 	padding: 0.6em 1.2em;
@@ -73,13 +73,13 @@ button,
 	transition: border-color 0.25s;
 }
 button:hover,
-.file-import-btn + .file-import-label:hover {
+.file-input-btn + .file-input-label:hover {
 	border-color: #646cff;
 }
 button:focus,
 button:focus-visible,
-.file-import-btn:focus + .file-import-label,
-.file-import-btn:focus-visible + .file-import-label {
+.file-input-btn:focus + .file-input-label,
+.file-input-btn:focus-visible + .file-input-label {
 	outline: 4px auto -webkit-focus-ring-color;
 }
 
@@ -95,7 +95,7 @@ button:focus-visible,
 		color: #747bff;
 	}
 	button,
-	.file-import-btn + .file-import-label {
+	.file-input-btn + .file-input-label {
 		border: 1px solid rgba(50, 50, 50, 0.3);
 		color: var(--text-color-theme);
 		background-color: var(--bg-color-theme);
