@@ -10,7 +10,7 @@ import { FunctionResponseContext } from '../contexts/FunctionResponseContext';
 import '../styles/resultsList.css';
 
 function ResultBox({ resultInfo }) {
-	const { name, data, count, filename, importFunc, resetFunc } = resultInfo;
+	const { name, data, count, filename, acceptFiletype, importFunc, resetFunc } = resultInfo;
 	const { responseDispatch, responseTimeout } = useContext(FunctionResponseContext);
 
 	async function importData(e) {
@@ -19,7 +19,7 @@ function ResultBox({ resultInfo }) {
 			await importFunc(importFile)
 				.then((response) => {
 					responseDispatch({type: 'HANDLE_RESPONSE', successMsg: response.successMsg});
-					responseTimeout.current = setTimeout(() => responseDispatch({type: 'RESE'}), 5000);
+					responseTimeout.current = setTimeout(() => responseDispatch({type: 'RESET_RESPONSE'}), 5000);
 				})
 				.catch((error) => {
 					console.error(error);
@@ -57,6 +57,7 @@ function ResultBox({ resultInfo }) {
 					type='file'
 					name={`${name}-file-data-import`}
 					id={`${name}-file-data-import`}
+					accept={acceptFiletype}
 					className='file-input-btn'
 					onChange={importData}
 				/>
@@ -100,6 +101,7 @@ export const ResultsList = memo(function ResultsList() {
 			data: inputRecordsJson.data,
 			count: inputRecordsJson.count,
 			filename: `${apiState.name}-input-records.json`,
+			acceptFiletype: 'application/json',
 			importFunc: useImportInputJson(),
 			resetFunc: () => resultsDispatch({ type: 'RESET', resultType: 'inputRecordsJson' }),
 		},
@@ -108,6 +110,7 @@ export const ResultsList = memo(function ResultsList() {
 			data: mappedCsv.csvString,
 			count: mappedCsv.count,
 			filename: `${apiState.name}-mapped.csv`,
+			acceptFiletype: 'text/csv, application/vnd.ms-excel',
 			importFunc: useImportMappedCsv(),
 			resetFunc: () => resultsDispatch({ type: 'RESET', resultType: 'mappedCsv' }),
 		},
@@ -116,6 +119,7 @@ export const ResultsList = memo(function ResultsList() {
 			data: zeroMatchCsv.csvString,
 			count: zeroMatchCsv.count,
 			filename: `${apiState.name}-zero-match.csv`,
+			acceptFiletype: 'text/csv, application/vnd.ms-excel',
 			importFunc: useImportZeroMatchCsv(),
 			resetFunc: () => resultsDispatch({ type: 'RESET', resultType: 'zeroMatchCsv' }),
 		},
@@ -124,6 +128,7 @@ export const ResultsList = memo(function ResultsList() {
 			data: hasMatchCsv.csvString,
 			count: hasMatchCsv.count,
 			filename: `${apiState.name}-has-match.csv`,
+			acceptFiletype: 'text/csv, application/vnd.ms-excel',
 			importFunc: useImportHasMatchCsv(),
 			resetFunc: () => resultsDispatch({ type: 'RESET', resultType: 'hasMatchCsv' }),
 		},

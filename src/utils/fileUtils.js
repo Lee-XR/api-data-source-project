@@ -39,7 +39,7 @@ function checkFileType(file, type) {
 			return (extension === 'json' && fileType === 'application/json');
 
 		case 'csv':
-			return (extension === 'csv' && fileType === 'text/csv');
+			return (extension === 'csv' && (fileType === 'text/csv' || fileType === 'application/vnd.ms-excel'));
 
 		default:
 			return false;

@@ -35,7 +35,7 @@ export function DataProcessing() {
 			if (!isValid) {
 				responseDispatch({
 					type: 'HANDLE_ERROR',
-					errorMsg: 'File cannot be imported. Must be .json file only.',
+					errorMsg: 'File cannot be imported. Must be .csv file only.',
 				});
 				return;
 			}
@@ -205,6 +205,7 @@ export function DataProcessing() {
 						id='csv-data-update'
 						className={isRunning ? 'disabled file-input-btn' : 'file-input-btn'}
 						disabled={isRunning}
+						accept='text/csv, application/vnd.ms-excel'
 						onChange={updateCsv}
 					/>
 					<label
