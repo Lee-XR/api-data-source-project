@@ -27,12 +27,18 @@ const ApiProperties = {
 		component: BandsInTown,
 		fetchFunc: fetchBandsInTown,
 	},
+    NoApi: {
+        name: 'NoApi'
+    }    
 };
 
 const apiArray = ['Skiddle', 'DataThistle', 'BandsInTown'];
 
 function apiReducer(state, action) {
     switch(action.type) {
+        case 'DEFAULT_API': 
+            return ApiProperties['Skiddle'];
+
         case 'CHANGE_API':
             return ApiProperties[action.apiName];
 

@@ -9,12 +9,15 @@ import { FunctionResponseContext } from '../contexts/FunctionResponseContext.jsx
 import { Header } from '../components/Header.jsx';
 import { ApiSelection } from '../components/ApiSelection.jsx';
 import { Spinner } from '../components/Spinner.jsx';
+import { Skiddle } from '../components/Skiddle.jsx';
 
 export function DataFetching() {
-	const { apiState } = useContext(ApiContext);
+	const { apiState, apiDispatch } = useContext(ApiContext);
 	const { resultsState, resultsDispatch } = useContext(ResultsContext);
 	const { inputRecordsJson } = resultsState;
-	const { responseState, responseDispatch, responseTimeout } = useContext(FunctionResponseContext);
+	const { responseState, responseDispatch, responseTimeout } = useContext(
+		FunctionResponseContext
+	);
 	const { isRunning, isError, errorMsg } = responseState;
 
 	const [apiEndpoint, setApiEndpoint] = useState('');
@@ -24,8 +27,8 @@ export function DataFetching() {
 	const navigate = useNavigate();
 	const { requestAbortController, requestAbortSignal } = useAbortRequest();
 
-	// Return selected API component
-	const ApiComponent = apiState.component;
+	// // Return selected API component
+	const ApiComponent = apiState.component || Skiddle;
 
 	async function fetchData() {
 		if (responseTimeout.current) {
@@ -44,21 +47,18 @@ export function DataFetching() {
 					count: totalHits,
 				});
 				responseDispatch({ type: 'HANDLE_RESPONSE', successMsg: '' });
-				responseTimeout.current = setTimeout(
-					() => responseDispatch({ type: 'RESET_RESPONSE' }),
-					5000
-				);
 			})
 			.catch((error) => {
 				if (!requestAbortSignal.aborted) {
 					console.error(error);
 					responseDispatch({ type: 'HANDLE_ERROR', errorMsg: error.message });
-					responseTimeout.current = setTimeout(
-						() => responseDispatch({ type: 'RESET_RESPONSE' }),
-						5000
-					);
 				}
 			});
+
+		responseTimeout.current = setTimeout(
+			() => responseDispatch({ type: 'RESET_RESPONSE' }),
+			5000
+		);
 	}
 
 	function resetOptions() {
@@ -76,6 +76,7 @@ export function DataFetching() {
 	}
 
 	useEffect(() => {
+		apiDispatch({type: 'DEFAULT_API'});
 		responseDispatch({ type: 'RESET_RESPONSE' });
 
 		return () => {

@@ -30,8 +30,8 @@ export function DataProcessing() {
 				clearTimeout(responseTimeout.current);
 				responseTimeout.current = null;
 			}
-			responseDispatch({ type: 'START_FUNCTION' });
 
+			responseDispatch({ type: 'START_FUNCTION' });
 			const validFileType = 'csv';
 			const isValid = checkFileType(newCsvFile, validFileType);
 			if (!isValid) {
@@ -53,32 +53,26 @@ export function DataProcessing() {
 						type: 'HANDLE_RESPONSE',
 						successMsg: 'CSV Records Data has been successfully updated.',
 					});
-					responseTimeout.current = setTimeout(
-						() => responseDispatch({ type: 'RESET_RESPONSE' }),
-						5000
-					);
 				})
 				.catch((error) => {
 					if (!requestAbortSignal.aborted) {
 						console.error(error);
 						responseDispatch({ type: 'HANDLE_ERROR', errorMsg: error.message });
-						responseTimeout.current = setTimeout(
-							() => responseDispatch({ type: 'RESET_RESPONSE' }),
-							5000
-						);
 					}
 				});
+
 			e.target.value = '';
 		} else {
 			responseDispatch({
 				type: 'HANDLE_ERROR',
 				errorMsg: 'Import file not found.',
 			});
-			responseTimeout.current = setTimeout(
-				() => responseDispatch({ type: 'RESET_RESPONSE' }),
-				5000
-			);
 		}
+
+		responseTimeout.current = setTimeout(
+			() => responseDispatch({ type: 'RESET_RESPONSE' }),
+			5000
+		);
 	}
 
 	async function mapFieldFunction() {
@@ -86,36 +80,38 @@ export function DataProcessing() {
 			clearTimeout(responseTimeout.current);
 			responseTimeout.current = null;
 		}
-		responseDispatch({ type: 'START_FUNCTION' });
-		const apiName = apiState.name.toLowerCase();
 
-		await mapFields(apiName, inputRecordsJson.data, requestAbortSignal)
-			.then(({ mappedCsv, mappedCount, successMsg }) => {
-				resultsDispatch({
-					type: 'UPDATE',
-					resultType: 'mappedCsv',
-					data: mappedCsv,
-					count: mappedCount,
+		if (inputRecordsJson.data.length === 0) {
+			responseDispatch({ type: 'HANDLE_ERROR', errorMsg: 'No data provided.' });
+		} else {
+			responseDispatch({ type: 'START_FUNCTION' });
+			const apiName = apiState.name.toLowerCase();
+
+			await mapFields(apiName, inputRecordsJson.data, requestAbortSignal)
+				.then(({ mappedCsv, mappedCount, successMsg }) => {
+					resultsDispatch({
+						type: 'UPDATE',
+						resultType: 'mappedCsv',
+						data: mappedCsv,
+						count: mappedCount,
+					});
+					responseDispatch({
+						type: 'HANDLE_RESPONSE',
+						successMsg: successMsg,
+					});
+				})
+				.catch((error) => {
+					if (!requestAbortSignal.aborted) {
+						console.error(error);
+						responseDispatch({ type: 'HANDLE_ERROR', errorMsg: error.message });
+					}
 				});
-				responseDispatch({
-					type: 'HANDLE_RESPONSE',
-					successMsg: successMsg,
-				});
-				responseTimeout.current = setTimeout(
-					() => responseDispatch({ type: 'RESET_RESPONSE' }),
-					5000
-				);
-			})
-			.catch((error) => {
-				if (!requestAbortSignal.aborted) {
-					console.error(error);
-					responseDispatch({ type: 'HANDLE_ERROR', errorMsg: error.message });
-					responseTimeout.current = setTimeout(
-						() => responseDispatch({ type: 'RESET_RESPONSE' }),
-						5000
-					);
-				}
-			});
+		}
+
+		responseTimeout.current = setTimeout(
+			() => responseDispatch({ type: 'RESET_RESPONSE' }),
+			5000
+		);
 	}
 
 	async function matchRecordsFunction() {
@@ -123,49 +119,51 @@ export function DataProcessing() {
 			clearTimeout(responseTimeout.current);
 			responseTimeout.current = null;
 		}
-		responseDispatch({ type: 'START_FUNCTION' });
-		const apiName = apiState.name.toLowerCase();
 
-		await matchRecords(apiName, mappedCsv.data, requestAbortSignal)
-			.then(
-				({
-					zeroMatchCsv,
-					zeroMatchCount,
-					hasMatchCsv,
-					hasMatchCount,
-					successMsg,
-				}) => {
-					resultsDispatch({
-						type: 'UPDATE',
-						resultType: 'zeroMatchCsv',
-						data: zeroMatchCsv,
-						count: zeroMatchCount,
-					});
-					resultsDispatch({
-						type: 'UPDATE',
-						resultType: 'hasMatchCsv',
-						data: hasMatchCsv,
-						count: hasMatchCount,
-					});
-					responseDispatch({
-						type: 'HANDLE_RESPONSE',
-						successMsg: successMsg,
-					});
-					responseTimeout.current = setTimeout(
-						() => responseDispatch({ type: 'RESET_RESPONSE' }),
-						5000
-					);
-				}
-			)
-			.catch((error) => {
-				if (requestAbortSignal.aborted) {
-					responseDispatch({ type: 'HANDLE_ERROR', errorMsg: error.message });
-					responseTimeout.current = setTimeout(
-						() => responseDispatch({ type: 'RESET_RESPONSE' }),
-						5000
-					);
-				}
-			});
+		if (mappedCsv.data.length === 0) {
+			responseDispatch({ type: 'HANDLE_ERROR', errorMsg: 'No data provided.' });
+		} else {
+			responseDispatch({ type: 'START_FUNCTION' });
+			const apiName = apiState.name.toLowerCase();
+
+			await matchRecords(apiName, mappedCsv.data, requestAbortSignal)
+				.then(
+					({
+						zeroMatchCsv,
+						zeroMatchCount,
+						hasMatchCsv,
+						hasMatchCount,
+						successMsg,
+					}) => {
+						resultsDispatch({
+							type: 'UPDATE',
+							resultType: 'zeroMatchCsv',
+							data: zeroMatchCsv,
+							count: zeroMatchCount,
+						});
+						resultsDispatch({
+							type: 'UPDATE',
+							resultType: 'hasMatchCsv',
+							data: hasMatchCsv,
+							count: hasMatchCount,
+						});
+						responseDispatch({
+							type: 'HANDLE_RESPONSE',
+							successMsg: successMsg,
+						});
+					}
+				)
+				.catch((error) => {
+					if (!requestAbortSignal.aborted) {
+						responseDispatch({ type: 'HANDLE_ERROR', errorMsg: error.message });
+					}
+				});
+		}
+
+		responseTimeout.current = setTimeout(
+			() => responseDispatch({ type: 'RESET_RESPONSE' }),
+			5000
+		);
 	}
 
 	useEffect(() => {

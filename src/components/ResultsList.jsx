@@ -11,6 +11,7 @@ import '../styles/resultsList.css';
 
 function ResultBox({ resultInfo }) {
 	const { name, data, count, filename, acceptFiletype, importFunc, resetFunc } = resultInfo;
+	const { apiDispatch } = useContext(ApiContext);
 	const { responseDispatch, responseTimeout } = useContext(FunctionResponseContext);
 
 	async function importData(e) {
@@ -18,20 +19,19 @@ function ResultBox({ resultInfo }) {
 		if (importFile) {
 			await importFunc(importFile)
 				.then((response) => {
+					apiDispatch({type: 'CHANGE_API', apiName: 'NoApi'});
 					responseDispatch({type: 'HANDLE_RESPONSE', successMsg: response.successMsg});
-					responseTimeout.current = setTimeout(() => responseDispatch({type: 'RESET_RESPONSE'}), 5000);
 				})
 				.catch((error) => {
 					console.error(error);
 					responseDispatch({type: 'HANDLE_ERROR', errorMsg: error.message});
-					responseTimeout.current = setTimeout(() => responseDispatch({type: 'RESET_RESPONSE'}), 5000);
 				});
 
 			e.target.value = '';
 		} else {
 			responseDispatch({type: 'HANDLE_ERROR', errorMsg: 'Import file not found.'});
-			responseTimeout.current = setTimeout(() => responseDispatch({type: 'RESET_RESPONSE'}), 5000);
 		}
+		responseTimeout.current = setTimeout(() => responseDispatch({type: 'RESET_RESPONSE'}), 5000);
 	}
 
 	function downloadResults() {
@@ -50,7 +50,7 @@ function ResultBox({ resultInfo }) {
 		<div className='box'>
 			<div className='info'>
 				<h3>{name}</h3>
-				<span>{count === 0 ? 'No Data Available' : `${count} Results`}</span>
+				<span>{`${count} Results`}</span>
 			</div>
 			<div className='action-btns'>
 				<input

@@ -5,7 +5,10 @@ import '../styles/header.css';
 
 export const ApiSelection = memo(function ApiSelection() {
 	const { apiArray, apiState, apiDispatch } = useContext(ApiContext);
-	const [selectedNum, setSelectedNum] = useState(apiArray.indexOf(apiState.name));
+	const [selectedNum, setSelectedNum] = useState(() => {
+		const index = apiArray.indexOf(apiState.name);
+		return index === -1 ? 0 : index;
+	});
 
 	function selectApi(index) {
 		setSelectedNum(index);
