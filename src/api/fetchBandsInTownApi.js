@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Fetch data from BandsInTown API
-export async function fetchBandsInTown(endpoint, id, params) {
+export async function fetchBandsInTown(endpoint, id, params, abortSignal) {
 	const url = import.meta.env.VITE_BANDSINTOWN_API_URL;
 	const app_id = import.meta.env.VITE_BANDSINTOWN_APP_ID;
 	const apiParams = {
@@ -10,7 +10,7 @@ export async function fetchBandsInTown(endpoint, id, params) {
 	};
 
 	return await axios
-		.get(`${url}${endpoint}`, { params: apiParams })
+		.get(`${url}${endpoint}`, { params: apiParams, signal: abortSignal })
 		.then((response) => {
 			if (response.data === '') {
 				return {

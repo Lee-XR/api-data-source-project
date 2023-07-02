@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAbortRequest } from '../hooks/UseAbortRequest.jsx';
 
 import { ApiContext } from '../contexts/ApiContext.jsx';
 import { ResultsContext } from '../contexts/ResultsContext.jsx';
@@ -21,6 +22,7 @@ export function DataFetching() {
 	const [apiParams, setApiParams] = useState('');
 	const [resetApi, setResetApi] = useState(null);
 	const navigate = useNavigate();
+	const { requestAbortController, requestAbortSignal } = useAbortRequest();
 
 	// Return selected API component
 	const ApiComponent = apiState.component;
@@ -33,7 +35,7 @@ export function DataFetching() {
 		responseDispatch({ type: 'START_FUNCTION' });
 
 		await apiState
-			.fetchFunc(apiEndpoint, apiSingleId, apiParams)
+			.fetchFunc(apiEndpoint, apiSingleId, apiParams, requestAbortSignal)
 			.then(({ totalHits, totalRecords }) => {
 				resultsDispatch({
 					type: 'UPDATE',
@@ -48,12 +50,14 @@ export function DataFetching() {
 				);
 			})
 			.catch((error) => {
-				console.error(error);
-				responseDispatch({ type: 'HANDLE_ERROR', errorMsg: error.message });
-				responseTimeout.current = setTimeout(
-					() => responseDispatch({ type: 'RESET_RESPONSE' }),
-					5000
-				);
+				if (!requestAbortSignal.aborted) {
+					console.error(error);
+					responseDispatch({ type: 'HANDLE_ERROR', errorMsg: error.message });
+					responseTimeout.current = setTimeout(
+						() => responseDispatch({ type: 'RESET_RESPONSE' }),
+						5000
+					);
+				}
 			});
 	}
 
@@ -75,6 +79,7 @@ export function DataFetching() {
 		responseDispatch({ type: 'RESET_RESPONSE' });
 
 		return () => {
+			requestAbortController.abort();
 			clearTimeout(responseTimeout.current);
 			responseTimeout.current = null;
 		};

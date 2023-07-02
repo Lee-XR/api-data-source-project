@@ -1,5 +1,6 @@
 import { useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useAbortRequest } from '../hooks/UseAbortRequest.jsx';
 import { mapFields, matchRecords } from '../api/dataProcessApi.js';
 import { dataProcessInstance } from '../configs/axiosConfig.js';
 import { checkFileType } from '../utils/fileUtils.js';
@@ -20,6 +21,7 @@ export function DataProcessing() {
 		FunctionResponseContext
 	);
 	const { isRunning, isError, isDone, successMsg, errorMsg } = responseState;
+	const { requestAbortController, requestAbortSignal } = useAbortRequest();
 
 	async function updateCsv(e) {
 		const newCsvFile = e.target.files[0];
@@ -41,7 +43,7 @@ export function DataProcessing() {
 			}
 
 			await dataProcessInstance
-				.post('/update-csv', newCsvFile)
+				.post('/update-csv', newCsvFile, { signal: requestAbortSignal })
 				.then((response) => {
 					if (!response?.data?.isSuccess) {
 						throw new Error('Something went wrong.');
@@ -57,14 +59,15 @@ export function DataProcessing() {
 					);
 				})
 				.catch((error) => {
-					console.error(error);
-					responseDispatch({ type: 'HANDLE_ERROR', errorMsg: error.message });
-					responseTimeout.current = setTimeout(
-						() => responseDispatch({ type: 'RESET_RESPONSE' }),
-						5000
-					);
+					if (!requestAbortSignal.aborted) {
+						console.error(error);
+						responseDispatch({ type: 'HANDLE_ERROR', errorMsg: error.message });
+						responseTimeout.current = setTimeout(
+							() => responseDispatch({ type: 'RESET_RESPONSE' }),
+							5000
+						);
+					}
 				});
-
 			e.target.value = '';
 		} else {
 			responseDispatch({
@@ -86,7 +89,7 @@ export function DataProcessing() {
 		responseDispatch({ type: 'START_FUNCTION' });
 		const apiName = apiState.name.toLowerCase();
 
-		await mapFields(apiName, inputRecordsJson.data)
+		await mapFields(apiName, inputRecordsJson.data, requestAbortSignal)
 			.then(({ mappedCsv, mappedCount, successMsg }) => {
 				resultsDispatch({
 					type: 'UPDATE',
@@ -104,12 +107,14 @@ export function DataProcessing() {
 				);
 			})
 			.catch((error) => {
-				console.error(error);
-				responseDispatch({ type: 'HANDLE_ERROR', errorMsg: error.message });
-				responseTimeout.current = setTimeout(
-					() => responseDispatch({ type: 'RESET_RESPONSE' }),
-					5000
-				);
+				if (!requestAbortSignal.aborted) {
+					console.error(error);
+					responseDispatch({ type: 'HANDLE_ERROR', errorMsg: error.message });
+					responseTimeout.current = setTimeout(
+						() => responseDispatch({ type: 'RESET_RESPONSE' }),
+						5000
+					);
+				}
 			});
 	}
 
@@ -121,7 +126,7 @@ export function DataProcessing() {
 		responseDispatch({ type: 'START_FUNCTION' });
 		const apiName = apiState.name.toLowerCase();
 
-		await matchRecords(apiName, mappedCsv.data)
+		await matchRecords(apiName, mappedCsv.data, requestAbortSignal)
 			.then(
 				({
 					zeroMatchCsv,
@@ -153,11 +158,13 @@ export function DataProcessing() {
 				}
 			)
 			.catch((error) => {
-				responseDispatch({ type: 'HANDLE_ERROR', errorMsg: error.message });
-				responseTimeout.current = setTimeout(
-					() => responseDispatch({ type: 'RESET_RESPONSE' }),
-					5000
-				);
+				if (requestAbortSignal.aborted) {
+					responseDispatch({ type: 'HANDLE_ERROR', errorMsg: error.message });
+					responseTimeout.current = setTimeout(
+						() => responseDispatch({ type: 'RESET_RESPONSE' }),
+						5000
+					);
+				}
 			});
 	}
 
@@ -165,6 +172,7 @@ export function DataProcessing() {
 		responseDispatch({ type: 'RESET_RESPONSE' });
 
 		return () => {
+			requestAbortController.abort();
 			clearTimeout(responseTimeout.current);
 			responseTimeout.current = null;
 		};

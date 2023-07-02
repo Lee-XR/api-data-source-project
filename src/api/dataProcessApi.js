@@ -1,8 +1,8 @@
 import { dataProcessInstance } from '../configs/axiosConfig';
 
-async function mapFields(apiName, records) {
+async function mapFields(apiName, records, abortSignal) {
 	return await dataProcessInstance
-		.post(`/mapping/${apiName}`, records)
+		.post(`/mapping/${apiName}`, records, { signal: abortSignal })
 		.then((response) => {
 			if (response.data) {
 				return {
@@ -23,9 +23,9 @@ async function mapFields(apiName, records) {
 		});
 }
 
-async function matchRecords(apiName, csvString) {
+async function matchRecords(apiName, csvString, abortSignal) {
 	return await dataProcessInstance
-		.post(`/matching/${apiName}`, csvString)
+		.post(`/matching/${apiName}`, csvString, { signal: abortSignal })
 		.then((response) => {
 			if (response.data) {
 				return {

@@ -1,14 +1,14 @@
 import { skiddleInstance } from '../configs/axiosConfig';
 
 // Single fetching
-async function singleFetch(data) {
+async function singleFetch(data, abortSignal) {
 	const path =
 		import.meta.env.MODE === 'production'
 			? '/api/skiddle'
 			: '/api/skiddle-api-php/';
 
 	return await skiddleInstance
-		.post(path, data)
+		.post(path, data, { signal: abortSignal })
 		.then((response) => {
 			const isArray = Array.isArray(response.data.results);
 
@@ -20,7 +20,7 @@ async function singleFetch(data) {
 }
 
 // Multiple fetching
-async function multiFetch(data, firstLimit, firstOffset, remainingFetches) {
+async function multiFetch(data, firstLimit, firstOffset, remainingFetches, abortSignal) {
 	const promises = [];
 
 	for (let num = 0; num < remainingFetches; num++) {
@@ -33,7 +33,7 @@ async function multiFetch(data, firstLimit, firstOffset, remainingFetches) {
 
 		const promise = new Promise((resolve) => {
 			setTimeout(() => {
-				resolve(singleFetch({ ...data, params: newParams }));
+				resolve(singleFetch({ ...data, params: newParams }, abortSignal));
 			}, 2000 * num);
 		});
 
@@ -46,17 +46,17 @@ async function multiFetch(data, firstLimit, firstOffset, remainingFetches) {
 }
 
 // Fetch data from Skiddle API through PHP SDK
-export async function fetchSkiddle(type, id, params) {
+export async function fetchSkiddle(type, id, params, abortSignal) {
 	const firstLimit = params.limit || (type === 'artists' ? 10 : 20);
 	const firstOffset = params.offset || 0;
 	const data = { type, id, params };
 
-	return await singleFetch(data)
+	return await singleFetch(data, abortSignal)
 		.then(({ totalHits, totalRecords }) => {
 			if (totalRecords.length < totalHits) {
 				const remainingFetches = Math.ceil((totalHits - firstLimit) / 100);
 
-				return multiFetch(data, firstLimit, firstOffset, remainingFetches).then(
+				return multiFetch(data, firstLimit, firstOffset, remainingFetches, abortSignal).then(
 					(response) => {
 						response.forEach((result) => {
 							totalRecords.push(...result.totalRecords);
