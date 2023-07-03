@@ -113,8 +113,7 @@ export function DataFetching() {
 					)}
 					{!isRunning && !isError && (
 						<span>
-							Returned <b>{inputRecordsJson.data.length}</b> of{' '}
-							<b>{inputRecordsJson.count}</b> results
+							Fetched <b>{inputRecordsJson.data.length}</b> results
 						</span>
 					)}
 					{!isRunning && isError && (

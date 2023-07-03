@@ -1,7 +1,38 @@
 import { useContext } from 'react';
 import { checkFileType } from '../utils/fileUtils';
-import { ResultsContext } from '../contexts/ResultsContext';
 import { getCsvRowCount } from '../utils/stringUtils';
+import { LatestCsvContext } from '../contexts/LatestCsvContext';
+import { ResultsContext } from '../contexts/ResultsContext';
+
+const jsonOnlyError = new Error(
+	'File cannot be imported. Must be .json file only.'
+);
+const csvOnlyError = new Error(
+	'File cannot be imported. Must be .csv file only.'
+);
+
+function useImportLatestCsv() {
+	const { setLatestCsv } = useContext(LatestCsvContext);
+
+	return async (csvFile) => {
+		const validFileType = 'csv';
+		const isValid = checkFileType(csvFile, validFileType);
+		if (!isValid) {
+			throw csvOnlyError;
+		}
+
+		await csvFile
+			.text()
+			.then((result) => {
+				setLatestCsv({ data: result, count: getCsvRowCount(result) });
+			})
+			.catch((error) => {
+				throw error;
+			});
+
+		return { successMsg: `${csvFile.name} successfully imported.` };
+	};
+}
 
 function useImportInputJson() {
 	const { resultsDispatch } = useContext(ResultsContext);
@@ -10,7 +41,7 @@ function useImportInputJson() {
 		const validFileType = 'json';
 		const isValid = checkFileType(jsonFile, validFileType);
 		if (!isValid) {
-			throw new Error('File cannot be imported. Must be .json file only.');
+			throw jsonOnlyError;
 		}
 
 		await jsonFile
@@ -39,7 +70,7 @@ function useImportMappedCsv() {
 		const validFileType = 'csv';
 		const isValid = checkFileType(csvFile, validFileType);
 		if (!isValid) {
-			throw new Error('File cannot be imported. Must be .json file only.');
+			throw csvOnlyError;
 		}
 
 		await csvFile
@@ -67,7 +98,7 @@ function useImportZeroMatchCsv() {
 		const validFileType = 'csv';
 		const isValid = checkFileType(csvFile, validFileType);
 		if (!isValid) {
-			throw new Error('File cannot be imported. Must be .csv file only.');
+			throw csvOnlyError;
 		}
 
 		await csvFile
@@ -95,18 +126,18 @@ function useImportHasMatchCsv() {
 		const validFileType = 'csv';
 		const isValid = checkFileType(csvFile, validFileType);
 		if (!isValid) {
-			throw new Error('File cannot be imported. Must be .csv file only.');
+			throw csvOnlyError;
 		}
 
 		await csvFile
 			.text()
 			.then((result) => {
-                resultsDispatch({
-                    type: 'UPDATE',
-                    resultType: 'hasMatchCsv',
-                    data: result,
-                    count: getCsvRowCount(result)
-                });
+				resultsDispatch({
+					type: 'UPDATE',
+					resultType: 'hasMatchCsv',
+					data: result,
+					count: getCsvRowCount(result),
+				});
 			})
 			.catch((error) => {
 				throw error;
@@ -117,6 +148,7 @@ function useImportHasMatchCsv() {
 }
 
 export {
+	useImportLatestCsv,
 	useImportInputJson,
 	useImportMappedCsv,
 	useImportZeroMatchCsv,

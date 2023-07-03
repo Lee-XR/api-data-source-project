@@ -1,11 +1,11 @@
 import { useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useImportLatestCsv } from '../hooks/UseImportData.jsx';
 import { useAbortRequest } from '../hooks/UseAbortRequest.jsx';
 import { mapFields, matchRecords } from '../api/dataProcessApi.js';
-import { dataProcessInstance } from '../configs/axiosConfig.js';
-import { checkFileType } from '../utils/fileUtils.js';
 
 import { ApiContext } from '../contexts/ApiContext.jsx';
+import { LatestCsvContext } from '../contexts/LatestCsvContext.jsx';
 import { ResultsContext } from '../contexts/ResultsContext.jsx';
 import { FunctionResponseContext } from '../contexts/FunctionResponseContext.jsx';
 
@@ -15,12 +15,14 @@ import { ResultsList } from '../components/ResultsList.jsx';
 
 export function DataProcessing() {
 	const { apiState } = useContext(ApiContext);
+	const { latestCsv } = useContext(LatestCsvContext);
 	const { resultsState, resultsDispatch } = useContext(ResultsContext);
 	const { inputRecordsJson, mappedCsv } = resultsState;
 	const { responseState, responseDispatch, responseTimeout } = useContext(
 		FunctionResponseContext
 	);
 	const { isRunning, isError, isDone, successMsg, errorMsg } = responseState;
+	const importLatestCsv = useImportLatestCsv();
 	const { requestAbortController, requestAbortSignal } = useAbortRequest();
 
 	async function updateCsv(e) {
@@ -32,36 +34,50 @@ export function DataProcessing() {
 			}
 
 			responseDispatch({ type: 'START_FUNCTION' });
-			const validFileType = 'csv';
-			const isValid = checkFileType(newCsvFile, validFileType);
-			if (!isValid) {
-				responseDispatch({
-					type: 'HANDLE_ERROR',
-					errorMsg: 'File cannot be imported. Must be .csv file only.',
-				});
-				return;
-			}
-
-			await dataProcessInstance
-				.post('/update-csv', newCsvFile, { signal: requestAbortSignal })
+			await importLatestCsv(newCsvFile)
 				.then((response) => {
-					if (!response?.data?.isSuccess) {
-						throw new Error('Something went wrong.');
-					}
-
 					responseDispatch({
 						type: 'HANDLE_RESPONSE',
-						successMsg: 'CSV Records Data has been successfully updated.',
+						successMsg: response.successMsg,
 					});
 				})
 				.catch((error) => {
-					if (!requestAbortSignal.aborted) {
-						console.error(error);
-						responseDispatch({ type: 'HANDLE_ERROR', errorMsg: error.message });
-					}
+					console.error(error);
+					responseDispatch({ type: 'HANDLE_ERROR', errorMsg: error.message });
 				});
 
 			e.target.value = '';
+			// const validFileType = 'csv';
+			// const isValid = checkFileType(newCsvFile, validFileType);
+			// if (!isValid) {
+			// 	responseDispatch({
+			// 		type: 'HANDLE_ERROR',
+			// 		errorMsg: 'File cannot be imported. Must be .csv file only.',
+			// 	});
+			// } else {
+
+			// await dataProcessInstance
+			// 	.post('/update-csv', newCsvFile, { signal: requestAbortSignal })
+			// 	.then((response) => {
+			// 		if (!response?.data?.isSuccess) {
+			// 			throw new Error('Something went wrong.');
+			// 		}
+
+			// 		responseDispatch({
+			// 			type: 'HANDLE_RESPONSE',
+			// 			successMsg: 'CSV Records Data has been successfully updated.',
+			// 		});
+			// 	})
+			// 	.catch((error) => {
+			// 		if (!requestAbortSignal.aborted) {
+			// 			console.error(error);
+			// 			responseDispatch({
+			// 				type: 'HANDLE_ERROR',
+			// 				errorMsg: error.message,
+			// 			});
+			// 		}
+			// 	});
+			// }
 		} else {
 			responseDispatch({
 				type: 'HANDLE_ERROR',
@@ -81,13 +97,23 @@ export function DataProcessing() {
 			responseTimeout.current = null;
 		}
 
-		if (inputRecordsJson.data.length === 0) {
+		if (latestCsv.count === 0) {
+			responseDispatch({
+				type: 'HANDLE_ERROR',
+				errorMsg: 'Import the latest CSV data first.',
+			});
+		} else if (inputRecordsJson.data.length === 0) {
 			responseDispatch({ type: 'HANDLE_ERROR', errorMsg: 'No data provided.' });
 		} else {
 			responseDispatch({ type: 'START_FUNCTION' });
 			const apiName = apiState.name.toLowerCase();
 
-			await mapFields(apiName, inputRecordsJson.data, requestAbortSignal)
+			await mapFields(
+				apiName,
+				inputRecordsJson.data,
+				latestCsv.data,
+				requestAbortSignal
+			)
 				.then(({ mappedCsv, mappedCount, successMsg }) => {
 					resultsDispatch({
 						type: 'UPDATE',
@@ -120,13 +146,23 @@ export function DataProcessing() {
 			responseTimeout.current = null;
 		}
 
-		if (mappedCsv.data.length === 0) {
+		if (latestCsv.count === 0) {
+			responseDispatch({
+				type: 'HANDLE_ERROR',
+				errorMsg: 'Import the latest CSV data first.',
+			});
+		} else if (mappedCsv.data.length === 0) {
 			responseDispatch({ type: 'HANDLE_ERROR', errorMsg: 'No data provided.' });
 		} else {
 			responseDispatch({ type: 'START_FUNCTION' });
 			const apiName = apiState.name.toLowerCase();
 
-			await matchRecords(apiName, mappedCsv.data, requestAbortSignal)
+			await matchRecords(
+				apiName,
+				mappedCsv.data,
+				latestCsv.data,
+				requestAbortSignal
+			)
 				.then(
 					({
 						zeroMatchCsv,
@@ -184,8 +220,8 @@ export function DataProcessing() {
 
 			<main>
 				<h2>{apiState.name} API Data Processing</h2>
-				<p>
-					Fetched <b>{inputRecordsJson.data.length}</b> results
+				<p className={latestCsv.count === 0 ? 'error-msg' : ''}>
+					Latest CSV Data: <b>{latestCsv.count}</b> Records
 				</p>
 
 				<div className='msg-box'>
@@ -221,7 +257,7 @@ export function DataProcessing() {
 						}
 						disabled={isRunning}
 					>
-						Update CSV Data
+						Imported Latest CSV Data
 					</label>
 					<button
 						className={isRunning ? 'disabled' : ''}
