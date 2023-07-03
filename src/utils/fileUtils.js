@@ -15,9 +15,7 @@ function downloadFile(filedata, filename, filetype) {
 		default:
 			blobData = [];
 	}
-	console.log(filetype);
-	console.log(filedata);
-	console.log(blobData);
+	
 	const url = window.URL.createObjectURL(blobData);
 	const link = document.createElement('a');
 	link.style.display = 'none';

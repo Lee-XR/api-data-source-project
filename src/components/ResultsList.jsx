@@ -107,7 +107,7 @@ export const ResultsList = memo(function ResultsList() {
 		},
 		{
 			name: 'Field-Mapped Records CSV',
-			data: mappedCsv.csvString,
+			data: mappedCsv.data,
 			count: mappedCsv.count,
 			filename: `${apiState.name}-mapped.csv`,
 			acceptFiletype: 'text/csv, application/vnd.ms-excel',
@@ -116,7 +116,7 @@ export const ResultsList = memo(function ResultsList() {
 		},
 		{
 			name: 'Zero-Match Records CSV',
-			data: zeroMatchCsv.csvString,
+			data: zeroMatchCsv.data,
 			count: zeroMatchCsv.count,
 			filename: `${apiState.name}-zero-match.csv`,
 			acceptFiletype: 'text/csv, application/vnd.ms-excel',
@@ -125,7 +125,7 @@ export const ResultsList = memo(function ResultsList() {
 		},
 		{
 			name: 'Has-Match Records CSV',
-			data: hasMatchCsv.csvString,
+			data: hasMatchCsv.data,
 			count: hasMatchCsv.count,
 			filename: `${apiState.name}-has-match.csv`,
 			acceptFiletype: 'text/csv, application/vnd.ms-excel',
