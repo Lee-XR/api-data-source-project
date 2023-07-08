@@ -40,3 +40,22 @@
 	gap: 1rem;
 	align-items: center;
 }
+
+.download-select {
+	border-radius: 8px;
+	border: 1px solid rgba(255, 255, 255, 0.3);
+	padding: 0.6em 0;
+	text-align: center;
+	font-size: 1em;
+	font-weight: 500;
+	font-family: inherit;
+	background-color: var(--bg-color-theme);
+	color: var(--text-color-theme);
+	transition: border-color 0.25s;
+}
+
+@media (prefers-color-scheme: light) {
+	.download-select {
+		border: 1px solid rgba(50, 50, 50, 0.3);
+	}
+}

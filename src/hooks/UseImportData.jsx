@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { checkFileType } from '../utils/fileUtils';
-import { getCsvRowCount } from '../utils/stringUtils';
+import { getCsvRowCount } from '../utils/dataUtils';
 import { LatestCsvContext } from '../contexts/LatestCsvContext';
 import { ResultsContext } from '../contexts/ResultsContext';
 

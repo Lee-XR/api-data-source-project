@@ -1,6 +1,6 @@
 function downloadFile(filedata, filename, filetype) {
 	let blobData = [];
-
+	
 	switch (filetype) {
 		case 'json':
 			blobData = new Blob([JSON.stringify(filedata, null, 2)], {
