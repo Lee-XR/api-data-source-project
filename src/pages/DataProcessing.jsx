@@ -47,37 +47,6 @@ export function DataProcessing() {
 				});
 
 			e.target.value = '';
-			// const validFileType = 'csv';
-			// const isValid = checkFileType(newCsvFile, validFileType);
-			// if (!isValid) {
-			// 	responseDispatch({
-			// 		type: 'HANDLE_ERROR',
-			// 		errorMsg: 'File cannot be imported. Must be .csv file only.',
-			// 	});
-			// } else {
-
-			// await dataProcessInstance
-			// 	.post('/update-csv', newCsvFile, { signal: requestAbortSignal })
-			// 	.then((response) => {
-			// 		if (!response?.data?.isSuccess) {
-			// 			throw new Error('Something went wrong.');
-			// 		}
-
-			// 		responseDispatch({
-			// 			type: 'HANDLE_RESPONSE',
-			// 			successMsg: 'CSV Records Data has been successfully updated.',
-			// 		});
-			// 	})
-			// 	.catch((error) => {
-			// 		if (!requestAbortSignal.aborted) {
-			// 			console.error(error);
-			// 			responseDispatch({
-			// 				type: 'HANDLE_ERROR',
-			// 				errorMsg: error.message,
-			// 			});
-			// 		}
-			// 	});
-			// }
 		} else {
 			responseDispatch({
 				type: 'HANDLE_ERROR',
