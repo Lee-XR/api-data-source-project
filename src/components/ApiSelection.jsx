@@ -4,11 +4,8 @@ import { ApiContext } from '../contexts/ApiContext';
 import '../styles/header.css';
 
 export const ApiSelection = memo(function ApiSelection() {
-	const { apiArray, apiState, apiDispatch } = useContext(ApiContext);
-	const [selectedNum, setSelectedNum] = useState(() => {
-		const index = apiArray.indexOf(apiState.name);
-		return index === -1 ? 0 : index;
-	});
+	const { apiArray, apiDispatch } = useContext(ApiContext);
+	const [selectedNum, setSelectedNum] = useState(0);
 
 	function selectApi(index) {
 		setSelectedNum(index);
