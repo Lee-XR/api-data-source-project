@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { ApiOptionsSection } from './ApiOptionsSection';
 
 import eventTypes from '../assets/json/skiddle-event-types.json';
-import venueTypes from '../assets/json/skiddle-event-types.json';
+import venueTypes from '../assets/json/skiddle-venue-types.json';
 import genres from '../assets/json/skiddle-all-genres.json';
 import brands from '../assets/json/skiddle-all-brands.json';
 import '../styles/apiOptions.css';
